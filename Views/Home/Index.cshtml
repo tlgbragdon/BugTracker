@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>BugTracker</h1>
+    <p class="lead">
+        Welcome to the BugTracker v0.1
+    </p>
+    <p>
+        To see your projects, please log in.
+     </p>
+    <p>
+        @Html.ActionLink("Log In >>","Login", "Account", null, new { @class = "btn btn-primary btn-lg" })
+    </p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>About BugTracker</h2>
+        <p>
+            <ul>
+                <li>BugTracker help you track and manage bugs and enhancements in your software development cycle.</li>
+                <li>BugTracker can be used on code in development as well as released sofware.</li>
+                <li>BugTracker allows for an unlimited number of projects and role-based users.</li>
+                <li> Roles available include Administrator, Project Manager, Developer, and Submitter.</li>
+                <li>Access and abilities in projects is based on the user's role.</li>
+            </ul>
+            
+        </p>
+        <p>
+            @Html.ActionLink("Log In >>", "Login", "Account", null, new { @class = "btn btn-default" })
+    </div>
+    <div class="col-md-4">
+        <h2>Demo</h2>
+        <p>Try out a fully-featured BugTracker as an Administrator to determine if it is the right tool for you.</p>
+        <p><div class="btn btn-default"> Coming Soon </div></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Register</h2>
+        <p>Register today to submit issues and enhancement requests for the BugTracker Application.</p>
+        @Html.ActionLink("Register >>", "Register", "Account", null, new { @class = "btn btn-default" })
+    </div>
+</div>

@@ -1,0 +1,35 @@
+﻿@model IEnumerable<BugTracker.Models.AdminUserViewModel>
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>User List</h2>
+
+<table class="table-striped table-responsive">
+    <tr>
+        <th>Name</th>
+        <th class="text-center">Roles</th>
+        <th></th>
+    </tr>
+    
+        @foreach (var item in Model)
+        {
+            <tr class="pad">
+                <td class="pad">
+                    @Html.DisplayFor(m => item.user.DisplayName)
+                </td>
+                <td>
+                    <ul class="list-unstyled list-inline pad text-center">
+                        @foreach (var role in item.roles)
+                        {
+                            <li>@Html.DisplayFor(m => role)</li>
+                        }
+                    </ul>
+                </td>
+                <td>
+                    @Html.ActionLink("Change Roles", "SelectRole", "Admin", new {userId = item.user.Id},null)
+                </td>
+            </tr>
+        }
+
+</table>

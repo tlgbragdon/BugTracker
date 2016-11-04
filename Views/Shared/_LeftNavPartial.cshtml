@@ -1,0 +1,138 @@
+﻿@using Microsoft.AspNet.Identity
+@using BugTracker.Models
+
+@if (Request.IsAuthenticated)
+{
+        var db = new ApplicationDbContext();
+        var user = db.Users.Find(User.Identity.GetUserId());
+    
+    <!-- Left side column.contains the sidebar -->
+    <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+            <!-- Sidebar user panel -->
+            <div class="user-panel">
+                <div class="pull-left image">  
+                    <!--TODO: uncomment after adding ProfileUrl for profile image to user -->
+                    @*@if (user.ProfileUrl != null)
+                    {*@
+                        <img src="~/images/no-bugs.png" class="img-circle" alt="User Image" />
+                        @*<img src = "user-r-profile-image.jpg" class="img-circle" alt="User Image">*@@*
+                    }*@
+                </div>
+                <div class="pull-left info">
+                    <p>@ViewBag.DisplayName</p>
+                    <ul>
+                        @foreach (var role in @ViewBag.roles)
+                        {  
+                                <li>@role</li>
+                        }
+                                      
+                    </ul>
+                    <a href="#"><i class="fa fa-circle text-success"></i>Online</a>
+                </div>
+            </div>
+            <!-- search form -->
+            <form action="#" method="get" class="sidebar-form">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search...">
+                    <span class="input-group-btn">
+                        <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </form>
+            <!-- /.search form -->
+            <!-- sidebar menu: : style can be found in sidebar.less -->
+            <ul class="sidebar-menu">
+                <li class="header">MAIN NAVIGATION</li>
+                <li class="treeview">
+                    <a href="@Url.Action("Index", "Projects")">
+                                <i class="fa fa-dashboard"></i><span>Dashboard</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                           </a>
+                    @if (User.IsInRole("Administrator"))
+                    {
+                        <ul class="treeview-menu">
+                            <li><a href="@Url.Action("AllIndex", "Projects")"> 
+                                <i class="fa fa-circle-o"></i>Admin Dashboard</a></li>
+                        </ul>
+                    }
+                </li>
+                <li class="treeview">
+                    <a href="@Url.Action("Index", "Projects")">
+                        <i class="fa fa-files-o"></i>
+                        <span>Projects</span>
+                        <span class="pull-right-container">
+                            <span class="label label-primary pull-right">@user.AssignedProjects.Count</span>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        @foreach (var p in user.AssignedProjects)
+                                {
+                            <li><a href = "@Url.Action("Details", "Projects", new {id=p.Id })">
+                                <i class="fa fa-circle-o"></i>@p.Name</a>
+                        </li>
+                        }
+                   </ul>
+                </li>
+                <li class="treeview">
+                    <a href="@Url.Action("Index", "Tickets")">
+                        <i class="fa fa-th"></i> 
+                        <span>Tickets</span>
+                        <span class="pull-right-container">
+                            <small class="label pull-right bg-green">Hot</small>
+                        </span>
+                    </a>
+                    <!-- TODO: complete for Tickets -->
+                    <ul class="treeview-menu">
+                        @*@foreach (var t in user.AssignedTickets)
+                        {*@
+                            <li>Some Ticket Here</li>
+
+                            @*<li><a href="@Url.Action("Details", "Tickets", new {id=t.Id })"><i class="fa fa-circle-o"></i>@t.Title</a></li>*@
+                        }
+                    </ul>
+                </li>
+
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-pie-chart"></i>
+                        <span>Notifications</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="../charts/chartjs.html"><i class="fa fa-circle-o"></i> ChartJS</a></li>
+                        @*<li><a href="../charts/morris.html"><i class="fa fa-circle-o"></i> Morris</a></li>
+                        <li><a href="../charts/flot.html"><i class="fa fa-circle-o"></i> Flot</a></li>
+                        <li><a href="../charts/inline.html"><i class="fa fa-circle-o"></i> Inline charts</a></li>*@
+                    </ul>
+                </li>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-laptop"></i>
+                        <span>Activity History</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="../UI/general.html"><i class="fa fa-circle-o"></i> General</a></li>
+                        @*<li><a href="../UI/icons.html"><i class="fa fa-circle-o"></i> Icons</a></li>
+                        <li><a href="../UI/buttons.html"><i class="fa fa-circle-o"></i> Buttons</a></li>
+                        <li><a href="../UI/sliders.html"><i class="fa fa-circle-o"></i> Sliders</a></li>
+                        <li><a href="../UI/timeline.html"><i class="fa fa-circle-o"></i> Timeline</a></li>
+                        <li><a href="../UI/modals.html"><i class="fa fa-circle-o"></i> Modals</a></li>*@
+                    </ul>
+                </li>
+            </ul>
+        </section>
+        <!-- /.sidebar -->
+    </aside>
+
+}

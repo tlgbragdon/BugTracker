@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Web;
 
@@ -9,6 +10,7 @@ namespace BugTracker.Models
     {
         //Status properties
         public int Id { get; set; }
+        [DisplayName("Status")]
         public string Name { get; set; }
         public string Description { get; set; }
 

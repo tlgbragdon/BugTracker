@@ -246,6 +246,24 @@ namespace BugTracker.Models
             return View(model);
         }
 
+        public PartialViewResult UserInfo()
+        {
+            var user = db.Users.Find(User.Identity.GetUserId());
+
+            ViewBag.DisplayName = user.DisplayName;
+            List<string> roleList = new List<string>();
+            foreach (var role in db.Roles)
+            {
+                if (User.IsInRole(role.Name))
+                {
+                    roleList.Add(role.Name);
+                }
+            }
+            ViewBag.roles = roleList;
+
+            return PartialView("~/Views/Shared/_LeftNavPartial.cshtml");
+
+        }
 
         protected override void Dispose(bool disposing)
         {

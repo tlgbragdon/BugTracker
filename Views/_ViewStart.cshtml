@@ -1,3 +1,20 @@
 ﻿@{
+    var controller = HttpContext.Current.Request.RequestContext.RouteData.Values["Controller"].ToString();
+    string cLayout = "";
+    if ((controller == "Account") || (controller == "Home"))
+    {
+        cLayout = "~/Views/Shared/_AuthLayout.cshtml";
+    }
+    else
+    {
+        cLayout = "~/Views/Shared/_Layout.cshtml";
+    }
+    Layout = cLayout;
+}
+
+@*
+   TLBG: ORIGINAL LAYOUT CODE:
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+*@

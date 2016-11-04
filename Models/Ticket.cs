@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Web;
 
@@ -18,6 +19,7 @@ namespace BugTracker.Models
         public int StatusId { get; set; }
         public string SubmitterId { get; set; }
         public string AssignedToId { get; set; }
+
 
         //Ticket Constructor
         public Ticket ()
@@ -41,7 +43,9 @@ namespace BugTracker.Models
         public virtual Status Status { get; set; }
 
         // connect Ticket to Users
+        [DisplayName("Submitter")]
         public virtual ApplicationUser Submitter { get; set; }
+        [DisplayName("Assigned To")]
         public virtual ApplicationUser AssignedTo { get; set; }
 
     }

@@ -38,7 +38,7 @@
         <td>
             @if (item.MediaUrl != null)
             {
-                  <img src=" @Url.Content(item.MediaUrl)" class="img-thumbnail" alt="project image" width="100" height="100">
+                  <img src="@Url.Content(item.MediaUrl)" class="img-thumbnail" alt="project image" width="100" height="100">
                   @*@Html.DisplayFor(modelItem => item.MediaUrl)*@
             }
         </td>
@@ -49,6 +49,12 @@
             @Html.DisplayFor(modelItem => item.Description)
         </td>
         <td>
+            @if (User.IsInRole("Submitter"))
+            {
+                @Html.ActionLink("Create New Ticket", "Create", "Tickets", new { projectId=item.Id}, null)
+                <br />
+            }
+
             @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
             { 
                 @Html.ActionLink("Edit Project", "Edit", new { projId=item.Id }) <span> | </span>

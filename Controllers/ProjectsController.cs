@@ -12,6 +12,8 @@ using System.Web.Mvc;
 
 namespace BugTracker.Models
 {
+    [RequireHttps]
+
     public class ProjectsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -24,13 +26,9 @@ namespace BugTracker.Models
         {
             // get list of projects the user is assigned to
             var userId = User.Identity.GetUserId();
-            var projList = projHelper.ListUserProjects(userId); 
-
-            // if admin role, view all projects instead 
-            if (roleHelper.IsUserInRole(userId, "Administrator"))
-            {
-                projList = db.Projects.ToList();
-            }
+            var projList = projHelper.ListUserProjects(userId);
+           
+            ViewBag.userName = db.Users.Find(userId).DisplayName;
 
             return View(projList);
         }
@@ -58,6 +56,7 @@ namespace BugTracker.Models
                 return HttpNotFound();
             }
 
+            
             // users can only see details for projects they are assigned to 
             // unless they are admin and can see all projects
             var userId = User.Identity.GetUserId();
@@ -68,6 +67,7 @@ namespace BugTracker.Models
             {
                 ViewBag.ownerName = db.Users.Find(project.OwnerId).DisplayName;
                 ViewBag.assignedUsers = projHelper.ListUsersOnProject(project.Id);
+                ViewBag.openTickets = db.Tickets.Where(t => t.ProjectId == project.Id).Where(t => t.Status.Name != "Closed").ToList();
                 return View(project);
             }
             else // if access not allowed, return to main project listing
@@ -83,7 +83,7 @@ namespace BugTracker.Models
             ViewBag.Title = "Create Project";
 
             var pmUsers = roleHelper.UsersInRole("ProjectManager");
-            ViewBag.ProjMgrs = new SelectList(pmUsers, "Id", "FirstName");
+            ViewBag.ProjMgrs = new SelectList(pmUsers, "Id", "DisplayName");
 
             return View();
         }
@@ -158,22 +158,9 @@ namespace BugTracker.Models
             var pmUsers = roleHelper.UsersInRole("ProjectManager");
             viewModel.projectMgrs = new SelectList(pmUsers, "Id", "DisplayName");
 
-
             var projectUsers = projHelper.ListUsersOnProject(projId);
-            //.Select(u => new
-            //{
-            //    RemoveId = u.Id,
-            //    DisplayName = u.FirstName + " " + u.LastName
-            //}).ToList();
-
             var projectNonUsers = projHelper.ListUsersNotOnProject(projId);
-            //.Select(u => new
-            //{
-            //    AddId = u.Id,
-            //    DisplayName = u.FirstName + " " + u.LastName
-            //}).ToList();
-
-            
+                 
             viewModel.usersNotOnProject = new MultiSelectList(projectNonUsers, "Id", "DisplayName");
             viewModel.usersOnProject = new MultiSelectList(projectUsers, "Id", "DisplayName");
 
@@ -241,16 +228,60 @@ namespace BugTracker.Models
 
                 db.Entry(proj).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", new { id = model.project.Id });
             }
             return View(model);
         }
 
+        // GET: Projects/AdminDashboard
+        [Authorize(Roles = "Administrator, ProjectManager")]
+        public ActionResult AdminDashboard()
+        {
+            AdminDashboardViewModel dashboardModel = new AdminDashboardViewModel();
+            dashboardModel.adminUserName = db.Users.Find(User.Identity.GetUserId()).DisplayName;
+            if (User.IsInRole("Administrator"))
+            {
+                dashboardModel.users = db.Users.AsNoTracking().ToList();
+                dashboardModel.projects = db.Projects.AsNoTracking().ToList();
+                dashboardModel.unassignedTickets = db.Tickets.Where(t=>t.Status.Name == "Open").AsNoTracking().ToList();
+                dashboardModel.assignedTickets = db.Tickets.Where(t => t.Status.Name == "Assigned").AsNoTracking().ToList();
+                dashboardModel.closedTickets = db.Tickets.Where(t => t.Status.Name == "Closed").AsNoTracking().ToList();
+                DateTime lastWeek = DateTime.Now.AddDays(-7);
+                dashboardModel.notifications = db.TicketNotifications.Where(n => n.Created >= lastWeek).AsNoTracking().ToList();
+            }
+            else // Project Manager
+            {
+                string userId = User.Identity.GetUserId();
+                dashboardModel.users = null;
+                dashboardModel.projects = db.Projects.Where(p =>p.OwnerId == userId).AsNoTracking().ToList();
+                dashboardModel.unassignedTickets = db.Tickets.Where(t=>t.Project.OwnerId == userId).Where(t => t.Status.Name == "Open").AsNoTracking().ToList();
+                dashboardModel.assignedTickets = db.Tickets.Where(t => t.Project.OwnerId == userId).Where(t => t.Status.Name == "Assigned").AsNoTracking().ToList();
+                dashboardModel.closedTickets = db.Tickets.Where(t => t.Project.OwnerId == userId).Where(t => t.Status.Name == "Closed").AsNoTracking().ToList();
+                DateTime lastWeek = DateTime.Now.AddDays(-7);
+
+                dashboardModel.notifications = null; //.TicketNotifications.Where(n => n.Created >= lastWeek).AsNoTracking().ToList();
+            }
+            
+
+            return View(dashboardModel);
+    }
+
+        // get user-specific data for left navigation menu
         public PartialViewResult UserInfo()
         {
             var user = db.Users.Find(User.Identity.GetUserId());
 
-            ViewBag.DisplayName = user.DisplayName;
+            // The list of Tickets Assigned To and Submitted By the current user
+            var SubmittedTickets = db.Tickets.Where(t => t.SubmitterId == user.Id).ToList();
+            var AssignedTickets = db.Tickets.Where(t => t.AssignedToId == user.Id).ToList();
+
+            List<Ticket> tempList = new List<Ticket>();
+            tempList.AddRange(AssignedTickets);
+            tempList.AddRange(SubmittedTickets);
+            // remove any duplicates from list
+            ViewBag.AllTickets = tempList.Distinct().ToList();
+
+            ViewBag.user = user;
             List<string> roleList = new List<string>();
             foreach (var role in db.Roles)
             {
@@ -262,7 +293,34 @@ namespace BugTracker.Models
             ViewBag.roles = roleList;
 
             return PartialView("~/Views/Shared/_LeftNavPartial.cshtml");
+        }
 
+
+        // get user-specific notificaitons and history data for right side-bar
+        // space is limited, so only report on daily activity
+        public PartialViewResult RtSideBar()
+        {
+            var user = db.Users.Find(User.Identity.GetUserId());
+            DateTime yesterday = DateTime.Now.AddDays(-1);
+            DateTime thisWeek = DateTime.Now.AddDays(-7);
+
+            if (User.IsInRole("Administrator"))
+            {
+                ViewBag.Notifications = db.TicketNotifications.Where(n => n.Created >= yesterday).OrderByDescending(n => n.Created).ToList();
+                ViewBag.History = db.TicketHistories.Where(n => n.Changed >= yesterday).OrderByDescending(n => n.Changed).ToList();
+            }
+            else if (User.IsInRole("ProjectManager"))
+            {
+                ViewBag.Notifications = db.TicketNotifications.Where(n => n.Created >= yesterday).Where(n => n.Ticket.Project.OwnerId == user.Id).OrderByDescending(n => n.Created).ToList();
+                ViewBag.History = db.TicketHistories.Where(n => n.Changed >= yesterday).Where(n => n.Ticket.Project.OwnerId == user.Id).OrderByDescending(n => n.Changed).ToList();
+            }
+            else
+            {
+                ViewBag.Notifications = db.TicketNotifications.Where(n => n.Created >= thisWeek).Where(n => n.UserId == user.Id).OrderByDescending(n => n.Created).ToList();
+                ViewBag.History = db.TicketHistories.Where(n => n.Changed >= thisWeek).Where(h => h.UserId == user.Id).OrderByDescending(n => n.Changed).ToList();
+            }
+
+            return PartialView("~/Views/Shared/_RightSideBarPartial.cshtml");
         }
 
         protected override void Dispose(bool disposing)

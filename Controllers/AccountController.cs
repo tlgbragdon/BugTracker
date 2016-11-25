@@ -9,12 +9,16 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using BugTracker.Models;
+using System.Configuration;
 
 namespace BugTracker.Controllers
 {
+
     [Authorize]
+    [RequireHttps]
     public class AccountController : Controller
     {
+        private ApplicationDbContext db = new ApplicationDbContext();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
@@ -91,6 +95,60 @@ namespace BugTracker.Controllers
             }
         }
 
+        // GET: /Account/Demo Login
+        [AllowAnonymous]
+        public ActionResult DemoLogin()
+        {
+
+            DemoLoginViewModel demoLogin = new Models.DemoLoginViewModel();
+            demoLogin.UserRoles = new SelectList(db.Roles, "Name", "Name", "ProjectManager");
+
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Projects");
+            }
+            return View(demoLogin);
+        }
+
+    // POST: /Account/DemoLogin
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DemoLogin(DemoLoginViewModel viewModel)
+        {           
+            string demoPWD = ConfigurationManager.AppSettings["DemoCredentials"];
+            string demoUser = "demo.sub@bugtracker.com";
+
+            switch (viewModel.SelectedRole) 
+            {
+                case "Administrator":
+                    demoUser = "demo.admin@bugtracker.com";
+                    break;
+                case "ProjectManager":
+                    demoUser = "demo.pm@bugtracker.com";
+                    break;
+                case "Developer":
+                    demoUser = "demo.dev@bugtracker.com";
+                    break;
+                case "Submitter":
+                    demoUser = "demo.sub@bugtracker.com";
+                    break;
+             }
+            var result = await SignInManager.PasswordSignInAsync(demoUser, demoPWD, false, shouldLockout: false);
+            switch (result)
+            {
+                case SignInStatus.Success:
+                    return RedirectToAction("Index", "Projects");
+
+                case SignInStatus.LockedOut:
+                case SignInStatus.RequiresVerification:
+                case SignInStatus.Failure:
+                default:
+                    ModelState.AddModelError("", "Invalid login attempt.");
+                    return RedirectToAction("Index", "Home", viewModel);
+            }
+        }
+
         //
         // GET: /Account/VerifyCode
         [AllowAnonymous]
@@ -157,15 +215,23 @@ namespace BugTracker.Controllers
                 if (!string.IsNullOrEmpty(model.FirstName))
                 {
                     user.FirstName = model.FirstName;
+                    user.ProfileIcon = model.FirstName[0].ToString();
                 }
                 if (!string.IsNullOrEmpty(model.LastName))
                 {
                     user.LastName = model.LastName;
+                    user.ProfileIcon += model.LastName[0].ToString();
+
                 }
                 if (!string.IsNullOrEmpty(model.DisplayName))
                 {
                     user.DisplayName = model.DisplayName;
+                    if (string.IsNullOrEmpty(user.ProfileIcon))
+                    {
+                        user.ProfileIcon = model.DisplayName[0].ToString();
+                    }
                 }
+
 
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -232,7 +298,8 @@ namespace BugTracker.Controllers
                 // Send an email with this link
                 string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                var resetEmailMessage = string.Format("<p>This is in response to your request to reset your password for <b>BugTracker</b>. </p><p> Please reset your BugTracker account password by clicking <a href =\"{0}\">here</a>.</p><p>If you did not request to reset your passoword, please contact us immediately.</p>", callbackUrl);
+                await UserManager.SendEmailAsync(user.Id, "Reset Password", resetEmailMessage);
                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
@@ -387,6 +454,12 @@ namespace BugTracker.Controllers
                     return View("ExternalLoginFailure");
                 }
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+
+                // save profile info from external login
+                user.DisplayName = info.ExternalIdentity.Name;
+                user.ProfileIcon = user.DisplayName[0].ToString();
+                user.Created = DateTime.Now;
+
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
@@ -442,84 +515,6 @@ namespace BugTracker.Controllers
             base.Dispose(disposing);
         }
 
-        // GET: /Account/ProfileDetails
-        [Authorize]
-        public ActionResult ProfileDetails()
-        {
-            var user = UserManager.FindById(User.Identity.GetUserId());
-            UserProfileViewModel model = new UserProfileViewModel();
-
-            model.FirstName = user.FirstName;
-            model.LastName = user.LastName;
-            model.DisplayName = user.DisplayName;
-            model.Email = user.Email;
-
-            return View(model);
-        }
-
-        // GET: /Account/ProfileEdit
-        [Authorize]
-        public ActionResult ProfileEdit()
-        {
-            var user = UserManager.FindById(User.Identity.GetUserId());
-            UserProfileViewModel model = new UserProfileViewModel();
-
-            model.FirstName = user.FirstName;
-            model.LastName = user.LastName;
-            model.DisplayName = user.DisplayName;
-            model.Email = user.Email;
-
-            return View(model);
-        }
-
-        //
-        // POST: /Account/ProfileEdit
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        //[OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
-        public async Task<ActionResult> ProfileEdit(UserProfileViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                ApplicationUser user = UserManager.FindById(User.Identity.GetUserId());
-                user.Updated = DateTime.Now;
-                if (!string.IsNullOrEmpty(model.FirstName))
-                {
-                    user.FirstName = model.FirstName;
-                }
-                if (!string.IsNullOrEmpty(model.LastName))
-                {
-                    user.LastName = model.LastName;
-                }
-                if (!string.IsNullOrEmpty(model.DisplayName))
-                {
-                    user.DisplayName = model.DisplayName;
-                }
-                // email address is also username
-                if (!string.IsNullOrEmpty(model.Email))
-                {
-                    user.Email = model.Email;
-                    user.UserName = model.Email;
-                }
-
-                IdentityResult result = await UserManager.UpdateAsync(user);
-                if (!result.Succeeded)
-                {
-                    AddErrors(result);
-                }
-                else
-                {
-                    // TLGB: this is my attempt to update the login partial view when the username/email is updated
-                    // it works, but not sure this is the best way to achieve this
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                }
-
-                return RedirectToAction("ProfileDetails", "Account");     
-            }
-
-            // If we got this far, something failed, redisplay form
-            return View(model);
-        }
 
         #region Helpers
         // Used for XSRF protection when adding external logins

@@ -60,6 +60,7 @@ Configuration.cs
 *.sln
 *.config
 *.ruleset
+App_Start/*
 
 # files from publishing
 obj/*

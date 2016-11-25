@@ -7,10 +7,13 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using BugTracker.Models;
+using System.IO;
 
 namespace BugTracker.Controllers
 {
     [Authorize]
+    [RequireHttps]
+
     public class ManageController : Controller
     {
         private ApplicationSignInManager _signInManager;
@@ -333,7 +336,98 @@ namespace BugTracker.Controllers
             base.Dispose(disposing);
         }
 
-#region Helpers
+        // GET: /Account/ProfileDetails
+        [Authorize]
+        public ActionResult ProfileDetails()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            UserProfileViewModel model = new UserProfileViewModel();
+
+            model.FirstName = user.FirstName;
+            model.LastName = user.LastName;
+            model.DisplayName = user.DisplayName;
+            model.Email = user.Email;
+            model.ProfileImage = user.ProfileImage;
+            model.ProfileIcon = user.ProfileIcon;
+
+            return View(model);
+        }
+
+        // GET: /Account/ProfileEdit
+        [Authorize]
+        public ActionResult ProfileEdit()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            UserProfileViewModel model = new UserProfileViewModel();
+
+            model.FirstName = user.FirstName;
+            model.LastName = user.LastName;
+            model.DisplayName = user.DisplayName;
+            model.Email = user.Email;
+            model.ProfileImage = user.ProfileImage;
+            model.ProfileIcon = user.ProfileIcon;
+
+            return View(model);
+        }
+
+        //
+        // POST: /Account/ProfileEdit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
+        public async Task<ActionResult> ProfileEdit(UserProfileViewModel model, HttpPostedFileBase profileImage)
+        {
+            if (ModelState.IsValid)
+            {
+                ApplicationUser user = UserManager.FindById(User.Identity.GetUserId());
+                user.Updated = DateTime.Now;
+                if (!string.IsNullOrEmpty(model.FirstName))
+                {
+                    user.FirstName = model.FirstName;
+                }
+                if (!string.IsNullOrEmpty(model.LastName))
+                {
+                    user.LastName = model.LastName;
+                }
+                if (!string.IsNullOrEmpty(model.DisplayName))
+                {
+                    user.DisplayName = model.DisplayName;
+                }
+                // email address is also username
+                if (!string.IsNullOrEmpty(model.Email))
+                {
+                    user.Email = model.Email;
+                    user.UserName = model.Email;
+                }
+
+                if (ImageUploadValidator.IsWebFriendlyImage(profileImage))
+                {
+                    var fileName = Path.GetFileName(profileImage.FileName);
+                    profileImage.SaveAs(Path.Combine(Server.MapPath("~/images/"), fileName));
+                    user.ProfileImage = "~/images/" + fileName;
+                }
+
+                IdentityResult result = await UserManager.UpdateAsync(user);
+                if (!result.Succeeded)
+                {
+                    AddErrors(result);
+                }
+                else
+                {
+                    // TLGB: this is my attempt to update the login partial view when the username/email is updated
+                    // it works, but not sure this is the best way to achieve this
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                }
+
+                return RedirectToAction("ProfileDetails", "Account");
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+
+        #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 

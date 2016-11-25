@@ -36,6 +36,7 @@ namespace BugTracker.Models
 
         }
 
+        // used on _layout, so needs to be static method
         public static int notificationCount()
         {
             ApplicationDbContext db = new ApplicationDbContext();

@@ -47,9 +47,9 @@ body {
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
   position: relative;
 }
-.layout-boxed {
+/*.layout-boxed {
   background: url('../img/boxed-bg.jpg') repeat fixed;
-}
+}*/
 /*
  * Content Wrapper - contains the main content
  * ```.right-side has been deprecated as of v2.0.0 in favor of .content-wrapper  ```
@@ -470,7 +470,7 @@ a:focus {
   position: relative;
   width: 100%;
   padding: 10px;
-  overflow: hidden;
+  /*overflow: hidden;*/
 }
 .user-panel:before,
 .user-panel:after {
@@ -488,7 +488,7 @@ a:focus {
 .user-panel > .info {
   padding: 5px 5px 5px 15px;
   line-height: 1;
-  position: absolute;
+  /*position: absolute;*/
   left: 55px;
 }
 .user-panel > .info > p {
@@ -658,7 +658,7 @@ a:focus {
 .main-sidebar .user-panel,
 .sidebar-menu > li.header {
   white-space: nowrap;
-  overflow: hidden;
+  /*overflow: hidden;*/
 }
 .sidebar-menu:hover {
   overflow: visible;
@@ -768,7 +768,7 @@ a:focus {
   font-size: 14px;
 }
 .control-sidebar-menu {
-  list-style: none;
+  /*list-style: none;*/
   padding: 0;
   margin: 0 -15px;
 }
@@ -927,7 +927,7 @@ a:focus {
 .navbar-nav > .notifications-menu > .dropdown-menu,
 .navbar-nav > .messages-menu > .dropdown-menu,
 .navbar-nav > .tasks-menu > .dropdown-menu {
-  width: 280px;
+  width: 100px;
   padding: 0 0 0 0;
   margin: 0;
   top: 100%;
@@ -2632,7 +2632,7 @@ a:focus {
  * Component: Table
  * ----------------
  */
-.table > thead > tr > th,
+/*.table > thead > tr > th,
 .table > tbody > tr > th,
 .table > tfoot > tr > th,
 .table > thead > tr > td,
@@ -2677,7 +2677,7 @@ table.text-center th {
 }
 .table.align td {
   text-align: right;
-}
+}*/
 /*
  * Component: Label
  * ----------------
@@ -3214,19 +3214,22 @@ table.text-center th {
 .login-box,
 .register-box {
   width: 360px;
-  margin: 7% auto;
+  margin: 2% auto;  /* 7% auto; */
 }
+
+
 @media (max-width: 768px) {
   .login-box,
   .register-box {
     width: 90%;
-    margin-top: 20px;
+    /*margin-top: 20px;*/
   }
 }
 .login-box-body,
 .register-box-body {
   background: #fff;
   padding: 20px;
+  margin: 0 5px;
   border-top: 0;
   color: #666;
 }

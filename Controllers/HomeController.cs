@@ -8,18 +8,21 @@ using System.Web.Mvc;
 
 namespace BugTracker.Controllers
 {
+    [RequireHttps]
     public class HomeController : Controller
     {
         ApplicationDbContext db = new ApplicationDbContext();
 
         public ActionResult Index()
         {
+            DemoLoginViewModel demoLogin = new Models.DemoLoginViewModel();
+            demoLogin.UserRoles = new SelectList(db.Roles, "Name", "Name", "ProjectManager");
 
             if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Projects");
             }
-            return View();
+            return View(demoLogin);
         }
 
         public ActionResult About()
@@ -35,6 +38,7 @@ namespace BugTracker.Controllers
 
             return View();
         }
+
 
     }
 }

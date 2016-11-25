@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Web;
 
@@ -10,8 +11,10 @@ namespace BugTracker.Models
         // TicketHistory properties
         public int Id { get; set; }
         public int TicketId { get; set; }
-        public string Property { get; set; } //TODO: ??
+        public string Property { get; set; }
+        [DisplayName("Old Value")]
         public string OldValue { get; set; }
+        [DisplayName("New Value")]
         public string NewValue { get; set; }
         public string UserId { get; set; }
         public DateTime Changed { get; set; }

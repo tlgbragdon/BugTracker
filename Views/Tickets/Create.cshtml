@@ -1,58 +1,199 @@
-﻿@model BugTracker.Models.TicketAssignViewModel
+﻿@model BugTracker.Models.TicketCreateViewModel
 
-
-<h2>Create</h2>
-
-@using (Html.BeginForm("Create", "Tickets", FormMethod.Post, new { encType = "Multipart/form-data" }))
+@section contentHeader
 {
-    @Html.AntiForgeryToken()
-    @Html.HiddenFor(model=>model.ticket.ProjectId)
-    
-    <div class="form-horizontal">
-        <h4>Ticket</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.ticket.Title, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ticket.Title, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ticket.Title, "", new { @class = "text-danger" })
-            </div>
-        </div>
+    <!-- Content Header(Page header) -->
+    <section class="content-header">
+        <h1>Create New Ticket</h1>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.ticket.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ticket.Description, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ticket.Description, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+            <li><a href="@Url.Action("Details", "Projects", new { id = Model.projectId })">Project</a></li>
+            <li class="active">Create Ticket</li>
+        </ol>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.ticket.TicketTypeId, "Ticket Type", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model=>model.ticket.TicketTypeId, (SelectList)Model.ticketTypes, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.ticket.TicketTypeId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ticket.PriorityId, "Priority", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model=>model.ticket.PriorityId, (SelectList)Model.ticketPriorities, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.ticket.PriorityId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
+    </section>
 }
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h3 class="box-title">New Ticket for @Model.projectName</h3>
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
+            </div>
+            <div class="box-body">
+
+                @using (Html.BeginForm("Create", "Tickets", FormMethod.Post, new { encType = "Multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.projectId)
+                    @Html.HiddenFor(model => model.projectName)
+
+                    <div class="form-horizontal">
+
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ticketTitle, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.ticketTitle, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.ticketTitle, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ticketDescription, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.ticketDescription, new { htmlAttributes = new { @class = "form-control", rows = "10" } })
+                                @Html.ValidationMessageFor(model => model.ticketDescription, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.typeId, "Ticket Type", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(model => model.typeId, (SelectList)Model.ticketTypes)
+                                @Html.ValidationMessageFor(model => model.typeId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.priorityId, "Priority", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(model => model.priorityId, (SelectList)Model.ticketPriorities)
+                                @Html.ValidationMessageFor(model => model.priorityId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label("Attachments", htmlAttributes: new { @class = "control-label col-md-2" })
+                            @if (ViewBag.FileError != null)
+                            {
+                                <p class="text-danger">@ViewBag.FileError</p>
+                            }
+                            <div class="col-md-10">
+                                <input type='file' name='uploadedFiles' multiple />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label("Attachment Description", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.attachmentsDescription, new { htmlAttributes = new { @class = "form-control", rows = "10" } })
+                                @Html.ValidationMessageFor(model => model.attachmentsDescription, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Create Ticket" class="btn btn-default" />
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>  <!-- /.box-body -->
+
+            <div class="box-footer">
+                <div class="col-sm-4 col-md-3">
+                    <br /> <i class="fa fa-arrow-left" aria-hidden="true"></i> @Html.ActionLink("Back to Project", "Details", "Projects", new { id = Model.projectId }, null) 
+                </div>
+            </div><!-- /.box-footer-->
+        </div>   <!-- /.box -->
+    </div>
 </div>
+
+
+<!----  Move this to Add Attachments -->
+@* @using (Html.BeginForm("AddFile", "Tickets", FormMethod.Post, new { encType = "Multipart/form-data" }))
+            <!--TODO -->
+        <div class="form-group">
+                    @Html.LabelFor(model => model.ticket.TicketAttachments, "Attachments", htmlAttributes: new { @class = "control-label col-md-2" })
+                        @if (ViewBag.FileError != null)
+                        {
+                            <p class="text-danger">@ViewBag.FileError</p>
+                        }
+                        @Html.LabelFor(model => model.ticket.TicketAttachments.FileURL, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <input name="imgFile" type="file" />
+
+                        </div>
+                </div>
+
+                <!-- model after comments in blog:-->
+                <div>
+
+                    @//if (!User.Identity.IsAuthenticated)
+            //{
+                        <!-- require user to log in before posting comment; if they log in from here, return to this page after log in -->
+                        @/*Html.ActionLink(linkText: "Log in to leave a comment", actionName: "Login", controllerName: "Account", routeValues: new { returnUrl = Url.Action(ViewContext.RouteData.Values["action"].ToString(), ViewContext.RouteData.Values["controller"].ToString(), ViewContext.RouteData.Values["id"]) }, htmlAttributes: new { id = "loginLink" })*/
+            //}
+                    <ul>
+                        @foreach (var attachment in Model.ticket.TicketAttachments)
+                        {
+                            <li class="ticket_attachment">
+                                Posted By: @attachment.UserId on @attachment.Created.ToString("d")
+                                @* @if (attachment.Updated != null)
+                        {
+                            <span>and Updated on: @attachment.Updated.Value.ToString("MM/dd/yyyy")</span>
+                        }
+        <br />
+        <p>@attachment.Description </p>
+
+        @* @if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
+        {
+        <div>
+            <a href="@Url.Action("Edit", "TicketAttachments", new { id = attachment.Id })">Edit</a> |
+            <a href="@Url.Action("Delete", "TicketAttachments", new { id = attachment.Id })">Delete</a>
+        </div>
+        }
+        </li>
+        }
+        </ul>
+
+
+    <!--- Refer to :
+        http://www.c-sharpcorner.com/UploadFile/db2972/multiple-file-upload-sample-using-httpfilecollectionbase-in/
+
+
+    <form enctype='multipart/form-data' method='POST'>
+        <input type='file' name='files[]' multiple />
+        <button type='submit'>Submit</button>
+    </form>
+
+        -->
+
+
+
+         @using (Html.BeginForm("Create", "TicketAttachment", FormMethod.Post))
+        {
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @if (Model.Files != null)
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">*@
+@*<span class="control-label col-md-2">Add a Ticket: </span>
+               <div class="col-md-10">
+    <!--TODO: start again here-->
+
+                   <input type="file" name="uploadedFiles" class="form-control" placeholder="Upload a file" />
+                   @Html.EditorFor(model => model.Comments.Body, new { htmlAttributes = new { @class = "form-control" } })
+                       @Html.ValidationMessageFor(model => model.Comments.Body, "", new { @class = "text-danger" })
+               </div>
+               </div>
+
+               <div class="form-group">
+               <div class="col-md-offset-2 col-md-10">
+                   <button class="btn btn-primary" type="submit">Submit</button>
+                   <input type="submit" value="Create" class="btn btn-primary" />
+               </div>
+           </div>
+       </div>
+       }
+       }
+
+       </div>*@
+
+<!-- end snippet from blog-->

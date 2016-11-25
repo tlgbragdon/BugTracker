@@ -1,0 +1,294 @@
+﻿@model BugTracker.Models.AdminDashboardViewModel
+
+@section contentHeader
+{
+    <section class="content-header">
+        <h1>
+            @if (User.IsInRole("Administrator"))
+            {
+                @: Administrator Dashboard
+            }
+            else
+            {
+                @: Project Manager Dashboard
+            }
+        </h1>
+        @*<ol class="breadcrumb">
+            <li><i class="fa fa-dashboard active"></i> Admin Dashboard</li>
+        </ol>*@
+    </section>
+}
+
+
+ <!-- Small boxes (Stat box) -->
+<div class="row">
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-aqua">
+            <div class="inner bg-aqua">
+                <h3>@Model.projects.Count()</h3>
+                <p>Projects</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-files-o"></i>
+            </div>
+            <a href="@Url.Action("AllIndex", "Projects")" class="small-box-footer">
+                More info <i class="fa fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-green">
+            <div class="inner  bg-green">
+                <h3>@{var count = Model.unassignedTickets.Count() + Model.assignedTickets.Count();}@count</h3>
+
+                <p>Tickets</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-ticket"></i>
+            </div>
+            <a href="@Url.Action("Index", "Tickets")" class="small-box-footer">
+                More info <i class="fa fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <!-- ./col -->
+
+    @if (Model.users != null)
+    { 
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-yellow">
+            <div class="inner bg-yellow">
+                <h3>@Model.users.Count()</h3>
+                <p>Users</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-users"></i>
+            </div>
+            <a href="#" class="small-box-footer">
+                More info <i class="fa fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    }
+
+    @if (Model.notifications != null)
+    {
+  
+    <!-- ./col -->   <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-red">
+            <div class="inner bg-red">
+                <h3>@Model.notifications.Count()</h3>
+
+                <p>Notifications This Week</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-bullhorn"></i>
+            </div>
+            <a href="@Url.Action("Index", "TicketNotifications")" class="small-box-footer">
+                More info <i class="fa fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>   <!-- ./col -->
+    }
+</div>  <!-- /.row -->
+
+
+<div class="row">
+    <!-- ./col -->
+    <div class="col-lg-3 col-xs-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">Tickets Per Project</h3>
+            </div>
+            <div class="box-body">
+            @foreach (var project in Model.projects)
+            {
+                 <a href="@Url.Action("PTIndex", "Tickets", new {projectId=project.Id})">@project.Name  : @project.Tickets.Count </a><br />
+            }
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-xs-6">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h3 class="box-title">Ticket Status Breakdown</h3>
+            </div>
+            <div class="box-body">
+                <ul>
+                    <li>Unassigned : @Model.unassignedTickets.Count </li >
+                    <li>In Progress : @Model.assignedTickets.Count </li>
+                    <li>Closed : @Model.closedTickets.Count </li>
+                </ul>
+            </div>
+           
+        </div>
+    </div>
+
+
+    </div>  <!-- /.row -->
+
+
+    <!-- ./col -->
+    @*<div class="row">
+            <div class="col-xs-12">
+                <div class="box box-info">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">@Html.DisplayFor(model => model.Name)</h3>
+                        <div class="pull-right">
+                            <a href="@Url.Action("Edit", new { projId = Model.Id })" title="Edit @Model.Name" aria-title="Edit @Model.Name">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <dl class="dl-horizontal">
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Description) : <br />
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.Description)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Created):
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.Created)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Updated) :
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.Updated)
+                            </dd>
+
+                            <dt>
+                                Project Manager :
+                            </dt>
+                            <dd>
+                                @ViewBag.ownerName
+                            </dd>
+
+                            <dt>
+                                Assigned Users :
+                            </dt>
+                            <dd>
+                                <ul class="list-unstyled list-inline">
+                                    @foreach (var u in ViewBag.assignedUsers)
+                                    {
+                                        <li>@u.DisplayName</li>
+                                    }
+                                </ul>
+                            </dd>
+                        </dl>
+                    </div>  <!-- /.box-body -->
+                    <div class="box-footer">
+                        <div class="col-sm-4 col-md-3">
+                            <br /> <i class="fa fa-arrow-left" aria-hidden="true"></i> @Html.ActionLink("Back to Project List", "Index")
+                        </div>
+                        <div class="col-sm-8 col-md-9">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-success">Tickets</button>
+                                <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    @if (Model.Tickets.Count > 0)
+                                    {
+                                        <li class="bg-success"><a href="@Url.Action("PTIndex", "Tickets", new { projectId = Model.Id })">View</a></li>
+                                    }
+                                    @if (User.IsInRole("Submitter"))
+                                    {
+                                        <li><a href="@Url.Action("Create", "Tickets", new { projectId = Model.Id })">Create</a></li>
+                                    }
+
+                                </ul>
+                            </div>
+                        </div><!-- /.box-footer-->
+                    </div>   <!-- /.box -->
+                </div>
+            </div>
+        </div>*@
+
+    <!-- ChartJS 1.0.1 -->
+    <script src="../../plugins/chartjs/Chart.min.js"></script>
+    <script>
+        $(function () {
+            //-------------
+            //- PIE CHART -
+            //-------------
+            // Get context with jQuery - using jQuery's .get() method.
+            var pieChartCanvas = $("#pieChart").get(0).getContext("2d");
+            var pieChart = new Chart(pieChartCanvas);
+            var PieData = [
+              {
+                  value: 700,
+                  color: "#f56954",
+                  highlight: "#f56954",
+                  label: "Chrome"
+              },
+              {
+                  value: 500,
+                  color: "#00a65a",
+                  highlight: "#00a65a",
+                  label: "IE"
+              },
+              {
+                  value: 400,
+                  color: "#f39c12",
+                  highlight: "#f39c12",
+                  label: "FireFox"
+              },
+              {
+                  value: 600,
+                  color: "#00c0ef",
+                  highlight: "#00c0ef",
+                  label: "Safari"
+              },
+              {
+                  value: 300,
+                  color: "#3c8dbc",
+                  highlight: "#3c8dbc",
+                  label: "Opera"
+              },
+              {
+                  value: 100,
+                  color: "#d2d6de",
+                  highlight: "#d2d6de",
+                  label: "Navigator"
+              }
+            ];
+            var pieOptions = {
+                //Boolean - Whether we should show a stroke on each segment
+                segmentShowStroke: true,
+                //String - The colour of each segment stroke
+                segmentStrokeColor: "#fff",
+                //Number - The width of each segment stroke
+                segmentStrokeWidth: 2,
+                //Number - The percentage of the chart that we cut out of the middle
+                percentageInnerCutout: 50, // This is 0 for Pie charts
+                //Number - Amount of animation steps
+                animationSteps: 100,
+                //String - Animation easing effect
+                animationEasing: "easeOutBounce",
+                //Boolean - Whether we animate the rotation of the Doughnut
+                animateRotate: true,
+                //Boolean - Whether we animate scaling the Doughnut from the centre
+                animateScale: false,
+                //Boolean - whether to make the chart responsive to window resizing
+                responsive: true,
+                // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+                maintainAspectRatio: true,
+                //String - A legend template
+                legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
+            };
+            //Create pie or douhnut chart
+            // You can switch between pie and douhnut using the method below.
+            pieChart.Doughnut(PieData, pieOptions);

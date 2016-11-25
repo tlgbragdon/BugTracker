@@ -1,27 +1,45 @@
-﻿@model BugTracker.Models.UserRoleViewModel
-@{
-    ViewBag.Title = "SelectRole";
+﻿ @model BugTracker.Models.UserRoleViewModel
+
+@section contentHeader
+{
+    <section class="content-header">
+        <h1>
+            Assign Roles
+
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="@Url.Action("Index", "Projects")"><i class="fa fa-dashboard"></i>Admin Dashboard</a></li>
+            <li><a href="@Url.Action("Index", "Admin")">Users and Roles</a></li>
+            <li class="active">Assign Roles</li>
+        </ol>
+    </section>
 }
 
-<h2>SelectRole</h2>
-
-@using (Html.BeginForm("SelectRole", "Admin", FormMethod.Post))
-        {              
-    @Html.HiddenFor(m => Model.Id)
-    
-            @Html.AntiForgeryToken()
-
-            <div>
-               @Model.FirstName @Model.LastName
+<div class="row">
+    <div class="col-sm-4">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Roles for @Model.FirstName  @Model.LastName</h3>
             </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                @using (Html.BeginForm("SelectRole", "Admin", FormMethod.Post))
+                {
+                    @Html.HiddenFor(m => Model.Id)
 
-            <div>
-                @Html.ListBox("SelectedRoles", Model.UserRoles)
+                    @Html.AntiForgeryToken()
+
+                   
+                    <div>
+                        @Html.ListBox("SelectedRoles", Model.UserRoles)
+                    </div>
+                    <input type="submit" value="Change Roles" class="btn purple-light" />
+                }
+
+            </div>   <!-- /.box-body -->
+            <div class="box-footer">
+                @Html.ActionLink("Return to User List", "Index")
             </div>
-            <input type = "submit" value = "Change Roles" class="btn btn-primary" />
-        }
-@*<button type="submit" class="btn btn-primary">Submit</button>*@
-
-
-
-
+            </div>  <!-- /.box -->
+    </div>   <!-- /.col -->
+</div>  <!-- /.row -->

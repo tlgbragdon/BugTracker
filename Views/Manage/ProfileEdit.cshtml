@@ -5,7 +5,7 @@
 
 <h2>@ViewBag.Title</h2>
 
-@using (Html.BeginForm("ProfileEdit", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("ProfileEdit", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form", encType = "Multipart/form-data" } ))
 {
     @Html.AntiForgeryToken()
     <h4>Update your account.</h4>
@@ -39,6 +39,21 @@
         </div>
     </div>
 
+    <div class="form-group">
+        @Html.LabelFor(m => m.ProfileImage, new { @class = "col-md-2 control-label" })
+        @if (!string.IsNullOrEmpty(Model.ProfileImage))
+        {
+            <img src="@Url.Content(Model.ProfileImage)" class="col=md-2 img-thumbnail img-responsive" />
+        }
+        else
+        {
+            <div class="profile-icon">@Model.ProfileIcon</div>
+        }
+        <div class="col-md-8">
+            <input name="ProfileImage" type="file"  />
+        </div>
+        
+    </div>
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">

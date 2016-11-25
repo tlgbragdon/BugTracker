@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewBag.Title</title>
 
-    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/css1")
+    @Styles.Render("~/Content/css2")
+
+    <link href="https://fonts.googleapis.com/css?family=Fontdiner+Swanky|Freckle+Face|Ravi+Prakash|Slackey" rel="stylesheet"> 
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
     <!-- Ionicons -->
@@ -21,7 +25,9 @@
             <!-- Logo -->
             <a href="@Url.Action("Index", "Home")" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
-                <span class="logo-mini"><img src="~/images/no-bugs.png" height="45" /></span>
+                <span class="logo-mini"><img src="~/images/no-bugs.png" height="25" /></span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg logo-font"><img src="~/images/no-bugs.png" height="25" /> BugTracker</span>
             </a>
 
             <!-- Header Navbar: style can be found in header.less -->
@@ -43,83 +49,36 @@
         @* @{Html.RenderAction("UserInfo", "Home");}  *@
         <!-- =============================================== -->
         <!-- Content Wrapper.Contains page content -->
-        <div class="content-wrapper">
+        <div class="content-wrapper full-width">
             <!-- Content Header(Page header) -->
-            <section class="content-header">
+            @*<section class="content-header">
                 <h1>
                     Page Header
-                    <small>it all starts here</small>
                 </h1>
-                
-            </section>
+            </section>*@
+
             <!-- Main content -->
             <section class="content">
                 <!-- Default box -->
                 <div class="box">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">@ViewBag.Title</h3>
-                       
-                    </div>
                     <div class="box-body">
                         @RenderBody()
-                    </div>
-                    <!-- /.box-body -->
-                    <div class="box-footer">
+                    </div>    <!-- /.box-body -->
+                    <!--- Footer -->
+                    @*<div class="box-footer">
                         Footer
-                    </div>
-                    <!-- /.box-footer-->
-                </div>
-                <!-- /.box -->
-            </section>
-            <!-- /.content -->
-        </div>
-        <!-- /.content-wrapper -->
-
+                    </div>*@    <!-- /.box-footer-->
+                </div>      <!-- /.box -->
+            </section>    <!-- /.content -->
+        </div>      <!-- /.content-wrapper -->
       
-    </div>
-    <!-- ./wrapper -->
-    <!-- ***** Original version below**** -->
-    @*<body>*@
-    @*<div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type = "button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("BugTracker", "Index", "Projects", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    @if(User.IsInRole("Administrator"))
-                    {
-                        <li>@Html.ActionLink("Admin", "Index", "Admin")</li>
-                    }
-                    <li>@Html.ActionLink("My Projects", "Index", "Projects")</li>
-                    @if(User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
-                    {
-                        <li>@Html.ActionLink("All Projects", "AllIndex", "Projects")</li>
-                    }
+    </div>   <!--  wrapper -->
 
-                    @*<li>@Html.ActionLink("Contact", "Contact", "Home")</li>*@@*
-                    </ul>
-                    @Html.Partial("_LoginPartial")
-                </div>
-            </div>
-        </div>
-        <div class="container body-content">
-            @RenderBody()
-            <hr />
-            <footer>
-                <p>&copy; @DateTime.Now.Year - Tracy Bragdon</p>
-            </footer>
-        </div>*@
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/adminlte")
+    @RenderSection("scripts", required: false)
 
-                    @Scripts.Render("~/bundles/jquery")
-                    @Scripts.Render("~/bundles/bootstrap")
-                    @Scripts.Render("~/bundles/adminlte")
-                    @RenderSection("scripts", required: false)
-                </body>
-            </html>
+</body>
+</html>
 

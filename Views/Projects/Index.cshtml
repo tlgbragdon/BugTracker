@@ -1,68 +1,108 @@
 ﻿@model IEnumerable<BugTracker.Models.Project>
 
-@{
-    ViewBag.Title = "Project Index";
+@section contentHeader
+{
+    <!-- Content Header(Page header) -->
+    <section class="content-header">
+        <h1>Projects  
+        @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
+        {
+            <a href="@Url.Action("Create")" title="Create New Project"><i class="fa fa-plus-circle text-aqua" aria-hidden="true"></i>
+                <span class="sr-only">Create New Project</span>
+            </a>
+        }
+        </h1>
+        <h3>All Projects for @ViewBag.userName</h3>
+        
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+            <li class="active">My Projects</li>
+        </ol>
+       
+    </section>
 }
 
 <h2>My Projects</h2>
 
-<p>
-   @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
-   {
-    @Html.ActionLink("Create New", "Create")
-   }
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.MediaUrl)
-        </th>
-
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-       
-    </tr>
-
-    @if (Model.Count() == 0)
-    {
-        <p>You are not assigned to any Projects.</p>
-    }
-
-    @foreach (var item in Model) {
-    <tr>
-
-        <td>
-            @if (item.MediaUrl != null)
-            {
-                  <img src="@Url.Content(item.MediaUrl)" class="img-thumbnail" alt="project image" width="100" height="100">
-                  @*@Html.DisplayFor(modelItem => item.MediaUrl)*@
-            }
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @if (User.IsInRole("Submitter"))
-            {
-                @Html.ActionLink("Create New Ticket", "Create", "Tickets", new { projectId=item.Id}, null)
-                <br />
-            }
-
-            @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
-            { 
-                @Html.ActionLink("Edit Project", "Edit", new { projId=item.Id }) <span> | </span>
-                @Html.ActionLink("View Details", "Details", new { id=item.Id }) 
-                @*  | @Html.ActionLink("Delete", "Delete", new { id=item.Id })*@
-            }
-        </td>
-    </tr>
+@if (Model.Count() == 0)
+{
+    @:You are not assigned to any Projects.
 }
+    <div class="row">
+    @foreach (var item in Model)
+    {        
+        <div class="col-md-4">
+            <div class="box box-info">
+                <div class="box-header with-border">
 
-</table>
+                        <h3 class="box-title">@Html.DisplayFor(modelItem => item.Name)</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="@item.Name">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                           
+                        </div>
+                </div>
+
+                <div class="box-body">
+                    @if (item.MediaUrl != null)
+                    {
+                        <img src="@Url.Content(item.MediaUrl)" class="img-thumbnail" alt="project image" width="100" height="100">
+
+                    }
+                    <br />
+                    @Html.DisplayFor(modelItem => item.Description)
+                    <br />
+                    @Html.DisplayNameFor(model => model.OwnerId) :
+                    @{
+                        var u = item.AssignedUsers.FirstOrDefault(p => p.Id == item.OwnerId);
+                        @u.DisplayName
+                    }
+
+                <br />
+                Number of Tickets: @item.Tickets.Count()
+               
+                </div>     <!-- /.box-body -->
+                <div class="box-footer">
+
+                    <div class="btn-group">
+                        <a class="btn btn-info" href="@Url.Action("Details", new { id = item.Id })">Project</a>
+                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="@Url.Action("Details", new { id = item.Id })">View</a></li>
+                            @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
+                            {
+                                <li><a href="@Url.Action("Edit", new { projId = item.Id })">Edit</a></li>
+                                @*<li><a href="#">Archive</a></li>*@
+                            }
+                        </ul>
+                    </div>
+
+                    <div class="btn-group">
+                        <a href="@Url.Action("PTIndex", "Tickets", new { projectId = item.Id })" class="btn btn-success">Tickets</a>
+                            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                @if (item.Tickets.Count > 0)
+                                {
+                                    @*  <!--TODO: How do I get SubmittedTickets to be recognized? --> && (User.SubmittedTickets.Count > 0 )*@
+
+                                    <li><a href="@Url.Action("PTIndex", "Tickets", new { projectId = item.Id })">View</a></li>
+                                }
+                                @if (User.IsInRole("Submitter"))
+                                {
+                                    <li><a href="@Url.Action("Create", "Tickets", new { projectId = item.Id })">Create</a></li>
+                                }
+                            </ul>
+                    </div>
+                </div>   <!-- /.box-footer-->
+            </div>   <!-- /.box -->
+          </div>
+        }
+    </div>
+

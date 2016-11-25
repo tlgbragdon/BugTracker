@@ -1,0 +1,30 @@
+﻿@model BugTracker.Models.DemoLoginViewModel
+
+
+<div class="box login-box box-purple">
+    <div class="login-logo">
+        <a href="@Url.Action("Index", "Home")"><b>BugTracker Demo</b></a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="login-box-body">
+        @using (Html.BeginForm("DemoLogin", "Account", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-horizontal">
+                @Html.ValidationSummary("", new { @class = "text-danger" })
+                <div class="form-group text-center">
+                    @Html.LabelFor(model => model.UserRoles, htmlAttributes: new { @class = "control-label" }) : 
+                    @Html.DropDownListFor(model => model.SelectedRole, (SelectList)Model.UserRoles)
+                    @Html.ValidationMessageFor(model => model.SelectedRole, "", new { @class = "text-danger" })
+                </div>
+                <input type="submit" value="Sign in for Demo" class="btn btn-primary btn-block btn-flat" />
+            </div>
+        }   
+    </div>   <!-- /.login-box-body -->
+</div>    <!-- /.login-box -->
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+

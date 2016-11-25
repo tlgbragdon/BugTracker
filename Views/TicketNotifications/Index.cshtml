@@ -1,0 +1,60 @@
+﻿@model IEnumerable<BugTracker.Models.TicketNotification>
+@section contentHeader
+{
+    <!-- Content Header(Page header) -->
+    <section class="content-header">
+        <h1>Ticket Notifications</h1>
+
+        @*<ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+                <li><a href="@Url.Action("Details", "Projects", new { id = history.Ticket.ProjectId} )">@history.Ticket.Project.Name</a></li>
+                <li><a href="@Url.Action("Details", "Tickets", new { id = history.TicketId} )">@history.Ticket.Title</a></li>
+                <li class="active">Ticket History</li>
+            </ol>*@
+    </section>
+}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Ticket Notifications</h3>
+            </div>
+            <div class="box-body">
+                @if (Model.Count() == 0)
+                {
+                    @: No notifications to view
+                }
+                else
+                {
+                    <table class="table-bordered table-striped table-responsive paged-table">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.Ticket.Title)</th>
+                                <th>@Html.DisplayNameFor(model => model.Message)</th>
+                                <th>@Html.DisplayNameFor(model => model.Created)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderByDescending(n => n.Created))
+                            {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Ticket.Title)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Message)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Created)
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                }
+            </div>   <!-- /.box-body -->
+            
+        </div>  <!-- /.box -->
+    </div>   <!-- /.col -->
+</div>  <!-- /.row -->

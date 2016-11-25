@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -9,15 +11,24 @@ namespace BugTracker.Models
     public class Ticket
     {
         public int Id { get; set; }
+        [Required]
         public string Title { get; set; }
+        [Required]
+        [DataType(DataType.MultilineText)]
         public string Description { get; set; }
         public DateTime Created { get; set; }
         public DateTime? Updated { get; set; }
         public int ProjectId { get; set; }
+        [DisplayName("Type")]
         public int TicketTypeId { get; set; }
+        [Required]
+        [DisplayName("Priority")]
         public int PriorityId { get; set; }
+        [DisplayName("Status")]
         public int StatusId { get; set; }
+        [DisplayName("Submitter")]
         public string SubmitterId { get; set; }
+        [DisplayName("Developer")]
         public string AssignedToId { get; set; }
 
 

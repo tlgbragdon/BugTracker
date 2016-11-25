@@ -3,61 +3,79 @@
 
 @if (Request.IsAuthenticated)
 {
-        var db = new ApplicationDbContext();
-        var user = db.Users.Find(User.Identity.GetUserId());
+    var db = new ApplicationDbContext();
+    var user = db.Users.Find(User.Identity.GetUserId());
 
-    <!--TODO: not sure I need this for template login??-->
-    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "dropdown user-menu" }))
-    {
-        @Html.AntiForgeryToken()
 
          <!-- User Account: style can be found in dropdown.less -->
-        <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <img src="@Url.Content("~/images/no-bugs.png")" height="45" class="img-circle" alt="User Image" />
-
-                <!--TODO: uncomment after adding ProfileUrl for profile image to user -->
-                @*@if (user.ProfileUrl != null)
+    <li class="dropdown user user-menu">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <i class="fa fa-user"></i>
+            @*<img src="@Url.Content("~/images/no-bugs.png")" height="25" class="img-circle" alt="User Image" />*@
+            <!--TODO: uncomment after adding ProfileUrl for profile image to user -->
+            @*@if (user.ProfileUrl != null)
                 {
                       <img src="@Url.Content(user.ProfileUrl)" class="img-circle" alt="User Image" />
                      <!--    <img src="../../dist/img/user2-160x160.jpg" class="user-image" alt="User Image"> -->
                         <span class="hidden-xs"></span>
                 }*@
-            </a>
-            <ul class="dropdown-menu">
-                <!-- User image -->
-                <li class="user-header">
-                    <img src="@Url.Content("~/images/no-bugs.png")" height="45" class="img-circle" alt="User Image" />
-                    @*@if (user.ProfileUrl != null)
+        </a>
+        <ul class="dropdown-menu">
+            <!-- User image -->
+            <li class="user-header">
+                <img src="@Url.Content("~/images/no-bugs.png")" height="160" class="img-circle" alt="User Image" />
+                @if (user.ProfileImage != null)
                     {
-                       <img src="@Url.Content(user.ProfileUrl)" class="img-circle" alt="User Image" />
+                       <img src="@Url.Content(user.ProfileImage)" class="img-circle" alt="User Image" />
                        <span class="hidden-xs"></span>
                     }
-                    *@                 
-                    <p>
-                        @user.DisplayName
-                        <small>Member since @user.Created</small>
-                    </p>
-                </li>
-                <!-- Menu Body -->
-                <!--Menu Footer-->
-                <li class="user-footer">
-                    <div class="pull-left">
-                        @Html.ActionLink("Profile", "ProfileDetails", "Account", new { @class = "btn btn-default btn-flat" })
-                    </div>
+                <p>
+                    @user.DisplayName
+                    <small>Member since @user.Created.Date</small>
+                </p>
+            </li>
+            <!-- Menu Body -->
+            <!--Menu Footer-->
+            <li class="user-footer">
+                <div class="pull-left">
+                    @Html.ActionLink("Profile", "ProfileDetails", "Manage" @*, new { @class = "btn btn-default btn-flat" }*@)
+                </div>
+                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "dropdown user-menu" }))
+                {
+                    @Html.AntiForgeryToken()
                     <div class="pull-right">
                         <a href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-default btn-flat">Logout</a>
                     </div>
-                </li>
-            </ul>
+                }
             </li>
-        }
-    }
-else
-{ 
-      <!-- TODO:  need to handle case if no user is logged in !-->
-    <ul>  <!-- class="nav navbar-nav navbar-right"> -->
-        <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" }) </li>
-        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" }) </li>
-    </ul>
+        </ul>
+    </li>
+
 }
+else
+{
+      <!-- if no user is logged in -->
+    @*<ul class="nav navbar-nav navbar-right">*@
+        <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+                <!-- Menu toggle button -->
+                <li class="dropdown messages-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        Sign In  <i class="fa fa-sign-in"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <!--Inner menu: contains the tasks-->
+                        <li>
+                            <ul class="menu">
+                                <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+                                <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+                                <li>@Html.ActionLink("Demo Log in", "DemoLogin", "Account", routeValues: null, htmlAttributes: new { id = "demoLoginLink" })</li>
+                            </ul>
+                        </li>
+                      </ul>
+                </li>
+                </ul>
+            </div>
+            @*</ul>*@
+
+            }

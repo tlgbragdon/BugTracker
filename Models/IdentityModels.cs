@@ -5,6 +5,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Collections.Generic;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BugTracker.Models
 {
@@ -18,12 +19,12 @@ namespace BugTracker.Models
         public bool PwdReset { get; set; }
         public DateTime Created { get; set; }
         public DateTime? Updated { get; set; }
+        public string ProfileImage { get; set; }
+        public string ProfileIcon { get; set; }
 
 
         public ApplicationUser()
         {
-            this.AssignedTickets = new HashSet<Ticket>();
-            this.SubmittedTickets = new HashSet<Ticket>();
             this.Attachments = new HashSet<TicketAttachment>();
             this.Comments = new HashSet<TicketComment>();
             this.ChangesHistory = new HashSet<TicketHistory>();
@@ -41,8 +42,7 @@ namespace BugTracker.Models
         }
 
         // navigational relationship with children
-        public virtual ICollection<Ticket>AssignedTickets { get; set; }
-        public virtual ICollection<Ticket> SubmittedTickets { get; set; }
+
         public virtual ICollection<TicketAttachment>Attachments { get; set; }
         public virtual ICollection<TicketComment>Comments { get; set; }
         public virtual ICollection<TicketHistory>ChangesHistory { get; set; }

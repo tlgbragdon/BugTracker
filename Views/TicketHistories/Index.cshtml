@@ -1,0 +1,91 @@
+﻿@model IEnumerable<BugTracker.Models.TicketHistory>
+
+@{var history = Model.FirstOrDefault();
+}
+@section contentHeader
+{
+    <!-- Content Header(Page header) -->
+    <section class="content-header">
+        <h1>Ticket History</h1>
+       
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+            <li><a href="@Url.Action("Details", "Projects", new { id = history.Ticket.ProjectId} )">@history.Ticket.Project.Name</a></li>
+            <li><a href="@Url.Action("Details", "Tickets", new { id = history.TicketId} )">@history.Ticket.Title</a></li>
+            <li class="active">Ticket History</li>
+        </ol>
+    </section>
+}
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">History for Ticket: @history.Ticket.Title</h3>
+            </div>
+            <div class="box-body">
+                @if (Model.Count() == 0)
+                {
+                    @: No history to view
+                }
+                else
+                {
+
+                    <table class="table-bordered table-striped table-responsive paged-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Changed)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Property)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.OldValue)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.NewValue)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.User.DisplayName)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Changed)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Property)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.OldValue)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.NewValue)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.User.DisplayName)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>   <!-- /.box-body -->
+            <div class="box-footer">
+                <div class="col-sm-4 col-md-3">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                        @Html.ActionLink("Back to Ticket", "Details", "Tickets", new { id = history.TicketId }, null)
+                </div>
+            </div><!-- /.box-footer-->
+        </div>  <!-- /.box -->
+    </div>   <!-- /.col -->
+</div>  <!-- /.row -->
+<i class="fa fa-arrow-left" aria-hidden="true"></i>
+@Html.ActionLink("Back to Ticket List for Project", "PTIndex", "Tickets", new { projectId = history.Ticket.ProjectId }, null)

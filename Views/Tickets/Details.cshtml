@@ -1,98 +1,399 @@
 ﻿@model BugTracker.Models.Ticket
 
-@{
-    ViewBag.Title = "Details";
+@using Microsoft.AspNet.Identity
+
+@section contentHeader
+{
+    <!--Content Header(Page header)-->
+    <section class="content-header">
+        <h1>Ticket: @Html.DisplayFor(model => model.Title)</h1>
+
+        <ol class="breadcrumb">
+            <li><a href = "#" ><i class="fa fa-dashboard"></i>Dashboard</a></li>
+            <li><a href = "@Url.Action("Details", "Projects", new { id = Model.ProjectId })">@Html.DisplayFor(model => model.Project.Name)</a></li>
+            <li class="active">@Html.DisplayFor(model => model.Title)</li>
+        </ol>
+
+    </section>
 }
 
-<h2>Details</h2>
-
 <div>
-    <h4>Ticket</h4>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Ticket Details</h3>
+                    <div class="pull-right">
+                        <a href = "@Url.Action("Edit", new { id = Model.Id })" title="Edit @Model.Title" aria-title="Edit @Model.Title">
+                            <i class="fa fa-pencil text-success" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.DisplayNameFor(model => model.Description):
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DisplayFor(model => model.Description)
+                        </div>
+                     </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.DisplayNameFor(model => model.TicketType.Name):
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DisplayFor(model => model.TicketType.Name)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.DisplayNameFor(model => model.Priority.Name):
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DisplayFor(model => model.Priority.Name)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.DisplayNameFor(model => model.Status.Name):
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DisplayFor(model => model.Status.Name)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.DisplayNameFor(model => model.AssignedTo):
+                        </div>
+                        <div class="col-md-8">
+                            @if (Model.AssignedToId == null)
+                            {
+                                @: Unassigned
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(model => model.AssignedTo.DisplayName)
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.DisplayNameFor(model => model.Project.Name):
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DisplayFor(model => model.Project.Name)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.DisplayNameFor(model => model.Created):
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DisplayFor(model => model.Created)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.DisplayNameFor(model => model.Updated):
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DisplayFor(model => model.Updated)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.DisplayNameFor(model => model.Submitter):
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DisplayFor(model => model.Submitter.DisplayName)
+                        </div>
+                    </div>
+                   
+                    </div>  <!-- /.box-body -->
+            </div>    <!-- /.box -->
+        </div>  <!-- /.col -->
+
+
+        <div class="col-md-4">
+            <div class="box box-warning">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Ticket Comments</h3>
+                    <div class="pull-right">
+                        <!-- coment this out for now as its not working; use in-line form to add comments-->
+                        @*<a href="@Url.Action("Create", "TicketComments", new { ticketId = Model.Id })" title="Create Comment for @Model.Title" aria-title="Create Comment @Model.Title">
+                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                        </a>*@
+                    </div>
+                </div>
+                <div class="box-body">
+
+
+    @using (Html.BeginForm("Create", "TicketComments", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="ticketId" value="@Model.Id">
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <div class="col-sm-9">
+                    <input type="text" name="Body" class="form-control" placeholder="Add a Comment" rows="4" />
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-warning" type="submit">Add</button>
+                </div>
+            </div>
+        </div>
+    }
+
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
+    @if (Model.TicketComments.Count == 0)
+    {
+        @: No Comments for this Ticket
+                                    }
+    else
+    {
+                @*<ul class="timeline">
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
+    <!-- timeline time label -->
+    <li class="time-label">
+        <span class="bg-purple">@DateTime.Now.Date</span>
+    </li>*@
+                    <!-- /.timeline-label -->
+                    foreach (var comment in Model.TicketComments.OrderByDescending(c => c.Updated ?? c.Created))
+                    {
+                   @* <!-- timeline item -->
+                    <li>
+                        <!-- timeline icon -->
+                        @if (comment.User.ProfileImage != null)
+                        {
 
-        <dt>
-            @Html.DisplayNameFor(model => model.TicketType.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.TicketType.Name)
-        </dd>
+                        }
+                            <img src="@Url.Content(comment.User.ProfileImage)" class="profile-thumbnail" />
+                        else
+                        {
+                            <i class="@comment.User.ProfileIcon" class="profile-icon"></i>
+                        }
+                       
+                        @*<div class="timeline-item">
+                            <span class="time"><i class="fa fa-clock-o"></i> 12:05</span>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Priority.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Priority.Name)
-        </dd>
+                            <h3 class="timeline-header"><a href="#">Support Team</a> ...</h3>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Status.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Status.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.AssignedTo)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.AssignedTo.DisplayName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Project.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Project.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Updated)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Updated)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Submitter)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Submitter.DisplayName)
-        </dd>
-
-        <ul>
-            @foreach (var file in Model.TicketAttachments)
-            {
-                <li>Attachment: @file.FileUrl</li>
-            }
-        </ul>
+                            <div class="timeline-body">*@
 
 
 
-    </dl>
-</div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to Ticket List", "Index")
-</p>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @comment.Body
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        Posted By: @comment.User.DisplayName <br />
+                                        On: @comment.Created.Date.ToString("d")
+                                    </div>
+                                    <div class="col-md-2">
+                                        @*<!-- user can edit or delete only their own attachments but we will check that in the controller ---> *@
+                                        <a href="@Url.Action("Edit", "TicketComments", new { id=comment.Id })"  arial-label="Edit this comment"><i class="fa fa-pencil text-warning" aria-hidden="true"></i></a> <br />
+                                        <a href="@Url.Action("Delete", "TicketComments" , new { id=comment.Id })" class="modal-link" arial-label="Remove this comment"><i class="fa fa-minus-circle text-warning" aria-hidden="true"></i></a>
+                                    </div>
+                                </div>
+
+                                <hr />
+                                }
+                                }
+
+                                <!-- TODO: Use vertical timeline type view here -->
+
+                            </div>  <!-- /.box-body -->
+                        </div>    <!-- /.box -->
+        </div>  <!-- /.col -->
+
+
+        <div class="col-md-4">
+            <div class="box box-warning">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Ticket Attachments</h3>
+                    <div class="pull-right">
+                        <a href="@Url.Action("Create", "TicketAttachments", new { ticketId = Model.Id })" title="Add Attachment for @Model.Title" aria-title="Add Attachment @Model.Title">
+                            <i class="fa fa-plus-circle text-warning" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="box-body">
+                    @if (Model.TicketAttachments.Count == 0)
+                    {
+                        @: No Attachments for this Ticket
+                    }
+                    @foreach (var file in Model.TicketAttachments.OrderByDescending(a => a.Created))
+                    {
+                        <div class="row">
+                            <div class="col-md-3">
+                               @*if there is no icon specified, use the file image instead *@
+                               @if (string.IsNullOrEmpty(file.IconName))
+                               {
+                                    <img src="@Url.Content(file.FileUrl)" class="img-thumbnail img-responsive" />
+                               }
+                               else
+                               {
+                                   <i class="@file.IconName" aria-hidden="true"></i>
+                               }
+                               
+                            </div>
+                            <div class="col-md-9">
+                                &nbsp; @file.Title
+                            </div>
+                            <div class="row">
+                                <div class="col-md-offset-3 col-md-9">
+                                    @*<a href="#" data-toggle="modal" data-target="#deleteModal" data-fileUrl="@file.FileUrl"><i class="fa fa-minus-circle" aria-hidden="true"></i></a>*@
+                                    <!-- trigger modal -->
+                                    @*<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Launch modal</button>*@
+                                    @*user can edit or delete only their own attachments but we will check that in the controller *@
+                                    @{var userId = User.Identity.GetUserId();
+                                        if (User.IsInRole("Administrator") || (userId == file.UserId) || (userId == Model.Project.OwnerId))
+                                        {
+                                            <ul class="list-unstyled list-inline">
+                                                <li><a href="@Url.Content(file.FileUrl)" target="_blank" arial-label="View this file attachment"><i class="fa fa-eye text-warning" aria-hidden="true"></i></a></li>
+                                                <li><a href="@Url.Action("Download", "TicketAttachments", new { attachmentId = file.Id })" arial-label="Download this file attachment"><i class="fa fa-download text-warning" aria-hidden="true"></i></a></li>
+                                                <li><a href="@Url.Action("Edit", "TicketAttachments", new { id = file.Id })" arial-label="Edit this file attachment"><i class="fa fa-pencil text-warning" aria-hidden="true"></i></a></li>
+                                                @*<li><a href="@Url.Action("Delete", "TicketAttachments", new { id = file.Id })" arial-label="Remove this file attachment"><i class="fa fa-minus-circle text-warning" aria-hidden="true"></i></a></li>*@
+                                                <li><a href="@Url.Action("Delete", "TicketAttachments" , new { id=file.Id })" class="modal-link" arial-label="Remove this file attachment"><i class="fa fa-minus-circle text-warning" aria-hidden="true"></i></a></li>
+                                                                                   </ul>
+                                        }
+                                    }
+                                </div>
+                                </div>
+                            </div>
+                        <hr />
+                    }
+                </div>  <!-- /.box-body -->
+            </div>    <!-- /.box -->
+        </div>  <!-- /.col -->
+
+    </div>   <!-- ./row -->
+
+    <!-- Ticket History -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Ticket History</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Ticket History">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body">
+                @if (Model.TicketHistories.Count() == 0)
+                {
+                    @: No history for this ticket to view
+                }
+                else
+                { 
+                    <table id="ticket-history" class="table-bordered table-striped table-responsive paged-table-desc">
+                        <thead>
+                            <tr>
+                                <th>Changed</th>
+                                <th>Property</th>
+                                <th>OldValue</th>
+                                <th>NewValue</th>
+                                <th>User</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model.TicketHistories)
+                            {
+                                <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Changed)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Property)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.OldValue)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.NewValue)
+                                        </td>
+                                        <td>
+                                           @Html.DisplayFor(modelItem => item.User.DisplayName)
+                                        </td>
+                                    </tr>
+                            }
+                        </table>
+                 }
+                            
+                </div>   <!-- /.box-body -->
+                
+            </div>  <!-- /.box -->
+        </div>   <!-- /.col -->
+    </div>  <!-- /.row -->
+
+    <!-- Ticket Notifications -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-danger">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Ticket Notifications</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Ticket Notifications">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    @if (Model.TicketNotifications.Count() == 0)
+                    {
+                        @: No notifications for you for this ticket
+                }
+                    else
+                    {
+                        <table class="table-bordered table-striped table-responsive paged-table-desc">
+                            <thead>
+                                <tr>
+                                    <th>Changed</th>
+                                    <th>Notification message</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var item in Model.TicketNotifications)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Created)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Message)
+                                        </td>
+                                    </tr>
+                                }
+                        </table>
+                    }
+                </div>   <!-- /.box-body -->
+
+            </div>  <!-- /.box -->
+        </div>   <!-- /.col -->
+    </div>  <!-- /.row -->
+
+        <div>
+            <i class="fa fa-arrow-left" aria-hidden="true"></i> @Html.ActionLink("Back to Ticket List", "Index")
+        </div>
+    </div> 
+
+
+<!-- Modal for removing attachments -->
+
+<div class="modal fade modal-warning" id="deleteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+           
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+

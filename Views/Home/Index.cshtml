@@ -1,44 +1,139 @@
-﻿@{
-    ViewBag.Title = "Home Page";
-}
+﻿@model BugTracker.Models.DemoLoginViewModel
 
-<div class="jumbotron">
-    <h1>BugTracker</h1>
-    <p class="lead">
-        Welcome to the BugTracker v0.1
-    </p>
-    <p>
-        To see your projects, please log in.
-     </p>
-    <p>
-        @Html.ActionLink("Log In >>","Login", "Account", null, new { @class = "btn btn-primary btn-lg" })
-    </p>
-</div>
+<div class="box box-solid landing-page">
+    @*<div class="box-header with-border">
+            <h3 class="box-title">Carousel</h3>
+        </div>*@
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="logo-font logo-xlg">
+                    BugTracker
+                </div>
+                <div class="splash-page">
+                    <a href="#features">
+                        <span class="fa-stack fa-2x">
+                            <i class="fa fa-circle fa-stack-2x text-purple" aria-hidden="true"></i>
+                            <i class="fa fa-dashboard fa-stack-1x fa-inverse" aria-hidden="true"></i>
+                        </span> Features
+                    </a>
+                    <p>
+                        <a href="#hood">
+                            <span class="fa-stack fa-2x">
+                                <i class="fa fa-circle fa-stack-2x text-purple" aria-hidden="true"></i>
+                                <i class="fa fa-cogs fa-stack-1x fa-inverse" aria-hidden="true"></i>
+                            </span> Under The Hood
+                        </a>
+                    </p>
+                    <p>
+                        <a href="#demo">
+                            <span class="fa-stack fa-2x">
+                                <i class="fa fa-circle fa-stack-2x text-purple" aria-hidden="true"></i>
+                                <i class="fa fa-desktop fa-stack-1x fa-inverse" aria-hidden="true"></i>
+                            </span> Try the Demo
+                        </a>
+                    </p>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>About BugTracker</h2>
-        <p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-example-generic" data-slide-to="1" class=""></li>
+                        <li data-target="#carousel-example-generic" data-slide-to="2" class=""></li>
+                    </ol>
+                    <div class="carousel-inner">
+                        <div class="item active">
+                            <img src="~/images/pexels-rubiks.jpg" alt="Resolve Issues" height="400">
+
+                            <div class="carousel-caption">
+                                <h3>Track and Resolve issues quickly</h3>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <img src="~/images/pexels-roleplay.jpg" alt="Role-based Permissions" height="400">
+
+                            <div class="carousel-caption">
+                                <h3>Role-based permissions</h3>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <img src="~/images/pexels-conversation.jpg" alt="Capture Comments" height="400">
+
+                            <div class="carousel-caption">
+                                <h3>Capture all discussions</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                        <span class="fa fa-angle-left"></span>
+                    </a>
+                    <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                        <span class="fa fa-angle-right"></span>
+                    </a>
+                </div>
+            </div>
+        </div> <!-- /. row -->
+    </div>   <!-- /.box-body -->
+</div>  <!-- /.box -->
+
+<div class="row>"
+<div class="col-xs-12">
+    <div class="box box-info" id="features">
+        <div class="box-header with-border">
+            <h3 class="box-title">Features</h3>
+        </div>
+        <div class="box-body">
+            <p>
+                The Bug Tracker is a Web-based software application for tracking software systems. If your company develops software,
+                whether for in-house use or distribution, BugTracker can be used to maintain an accurate record of the software development 
+                process on a per-project basis.
+            </p>
             <ul>
-                <li>BugTracker help you track and manage bugs and enhancements in your software development cycle.</li>
+                <li>BugTracker helps you track and manage bugs and enhancements in your software development cycle.</li>
                 <li>BugTracker can be used on code in development as well as released sofware.</li>
                 <li>BugTracker allows for an unlimited number of projects and role-based users.</li>
-                <li> Roles available include Administrator, Project Manager, Developer, and Submitter.</li>
-                <li>Access and abilities in projects is based on the user's role.</li>
+                <li>User Roles available include Administrator, Project Manager, Developer, and Submitter.</li>
+                <li>Access and abilities in projects are based on the user's role.</li>
             </ul>
-            
-        </p>
-        <p>
-            @Html.ActionLink("Log In >>", "Login", "Account", null, new { @class = "btn btn-default" })
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Demo</h2>
-        <p>Try out a fully-featured BugTracker as an Administrator to determine if it is the right tool for you.</p>
-        <p><div class="btn btn-default"> Coming Soon </div></p>
+</div>
+</div>
+
+<div class="row>"
+<div class="col-xs-12">
+    <div class="box box-warning" id="hood">
+        <div class="box-header with-border">
+            <h3 class="box-title">Under The Hood</h3>
+        </div>
+        <div class="box-body">
+            <p>
+                While the look and ease of use of any application is important, what you don't see on the face of the application is critical.
+                The technologies utitlized will effect the security and reliability of your tools.  BugTracker utilizes the following methodologies and technologies:
+            </p>
+            <ul>
+                <li>Code-First database schema</li>
+                <li>MVC software design pattern</li>
+                <li>User and Role Authentication and Authorization through Entity Framework</li>
+                <li>Responsive, Bootstrap interface and HTML5</li>
+            </ul>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Register</h2>
-        <p>Register today to submit issues and enhancement requests for the BugTracker Application.</p>
-        @Html.ActionLink("Register >>", "Register", "Account", null, new { @class = "btn btn-default" })
+</div>
+</div>
+    
+<div class="row>"
+<div class="col-xs-12">
+    <div class="box box-success" id="demo">
+        <div class="box-header with-border">
+            <h3 class="box-title">Live Demo</h3>
+        </div>
+        <div class="box-body">
+            <p><a href="@Url.Action("Login", "Account")">Try out a fully-featured BugTracker</a> as an Administrator, Project Manager, Developer, and Submitter to determine if it is the right tool for you.</p>
+        </div>
     </div>
+</div>
 </div>

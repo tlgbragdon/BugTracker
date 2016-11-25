@@ -10,8 +10,18 @@
 <h4>Your Profile</h4>
 <hr />
 
+@if (!string.IsNullOrEmpty(Model.ProfileImage))
+{
+    <img src="@Url.Content(Model.ProfileImage)" class="col=md-2 img-thumbnail img-responsive  profile-user-img" />
+}
+else
+{
+    <div class="profile-icon">@Model.ProfileIcon</div>
+}
 
 <dl class="dl-horizontal">
+   
+   
      <dt>
         @Html.LabelFor(m => m.FirstName)
      </dt>
@@ -33,6 +43,7 @@
         @Html.DisplayFor(m => m.DisplayName)
     </dd>
 
+   
     <dt>
         @Html.LabelFor(m => m.Email)
     </dt>

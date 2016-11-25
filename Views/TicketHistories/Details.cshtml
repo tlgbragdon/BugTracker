@@ -1,0 +1,76 @@
+﻿@model BugTracker.Models.TicketHistory
+
+@section contentHeader
+{
+    <!-- Content Header(Page header) -->
+    <section class="content-header">
+        <h1>Ticket History</h1>
+
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+            <li><a href="@Url.Action("Details", "Projects", new { id = Model.Ticket.Project.Id})">@Html.DisplayFor(model => model.Ticket.Project.Name)</a></li>
+            <li><a href="@Url.Action("Details", "Ticket", new { id = Model.Ticket.Id})">@Html.DisplayFor(model => model.Ticket.Title)</a></li>
+            <li class="active">History</li>
+        </ol>
+    </section>
+}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">History for Ticket: @Html.DisplayFor(model => model.Ticket.Title)</h3>
+            </div>
+            <div class="box-body">
+                <div class="col-sm-12">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            @Html.DisplayNameFor(model => model.User.DisplayName)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.User.DisplayName)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Property)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Property)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.OldValue)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.OldValue)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.NewValue)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.NewValue)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Changed)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Changed)
+                        </dd>
+
+                    </dl>
+                </div>  <!-- /.col -->
+            </div>  <!-- /.box-body -->
+            <div class="box-footer">
+                <div class="col-sm-6">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>@Html.ActionLink("Back to List", "Index", new { ticketId = Model.TicketId } )
+                </div>
+            </div><!-- /.box-footer-->
+        </div>   <!-- /.box -->
+    </div>
+</div>

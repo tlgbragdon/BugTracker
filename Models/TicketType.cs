@@ -12,6 +12,7 @@ namespace BugTracker.Models
         public int Id { get; set; }
         [DisplayName("Type")]
         public string Name { get; set; }
+        public string IconName { get; set; }
         public string Description { get; set; }
         
         // TickeType constructor

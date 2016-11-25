@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Web;
 
@@ -15,8 +16,10 @@ namespace BugTracker.Models
         public string Description { get; set; }
         public DateTime Created { get; set; }
         public DateTime? Update { get; set; }
+        [DisplayName("File to Attach")]
         public string FileUrl { get; set; }
-        public string FilePath { get; set; }  //?? purpose??
+        public string FileType { get; set; }
+        public string IconName { get; set; }
 
         // TicketAttachment parent navigation
         public virtual Ticket Ticket { get; set; }

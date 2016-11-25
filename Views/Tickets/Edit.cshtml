@@ -1,73 +1,162 @@
 ﻿@model BugTracker.Models.TicketAssignViewModel
 
-<h2>Edit</h2>
-
-@using (Html.BeginForm())
+@section contentHeader
 {
-    @Html.AntiForgeryToken()
-    
-    @Html.HiddenFor(model=>model.ticket.Id)
-    <div class="form-horizontal">
-        <h4>Ticket</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <!-- Content Header(Page header) -->
+    <section class="content-header">
+        <h1>Edit Ticket </h1>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.ticket.Title, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ticket.Title)
-                @Html.ValidationMessageFor(model => model.ticket.Title, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+            <li><a href="@Url.Action("Details", "Projects", new { id = Model.ticket.ProjectId })">@Html.DisplayFor(model => model.ticket.Project.Name)</a></li>
+            <li class="active">Ticket: @Html.DisplayFor(model => model.ticket.Title)</li>
+        </ol>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.ticket.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ticket.Description)
-                @Html.ValidationMessageFor(model => model.ticket.Description, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ticket.TicketTypeId, "Ticket Type", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model => model.ticket.TicketTypeId, (SelectList)Model.ticketTypes)
-                @Html.ValidationMessageFor(model => model.ticket.TicketTypeId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ticket.PriorityId, "Priority", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model => model.ticket.PriorityId, (SelectList)Model.ticketPriorities)
-                @Html.ValidationMessageFor(model => model.ticket.PriorityId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ticket.StatusId, "Status", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model => model.ticket.StatusId, (SelectList)Model.ticketStatuses)
-                @Html.ValidationMessageFor(model => model.ticket.StatusId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-         <div class="form-group">
-            @Html.LabelFor(model => model.ticket.AssignedToId, "Assigned To", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model => model.ticket.AssignedToId, (SelectList)Model.developerList, "Unassigned")
-                @Html.ValidationMessageFor(model => model.ticket.AssignedToId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
+    </section>
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Edit : @Html.DisplayFor(model => @model.ticket.Title) <br />
+                        in Project: @Html.DisplayFor(model => model.ticket.Project.Name)
+                    </h3>
+                    
+                </div>
+                <div class="box-body">
+                    @using (Html.BeginForm("Edit", "Tickets", FormMethod.Post, new { encType = "Multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @Html.HiddenFor(model => model.ticket.Id)
+                        <div class="form-horizontal">
+
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ticket.Title, htmlAttributes: new { @class = "control-label col-md-3" })
+                                <div class="col-md-9">
+                                    @Html.EditorFor(model => model.ticket.Title)
+                                    @Html.ValidationMessageFor(model => model.ticket.Title, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ticket.Description, htmlAttributes: new { @class = "control-label col-md-3" })
+                                <div class="col-md-9">
+                                    @Html.EditorFor(model => model.ticket.Description, new { htmlAttributes = new { @class = "form-control", rows = "10" } })
+                                    @Html.ValidationMessageFor(model => model.ticket.Description, "", new { @class = "text-danger"})
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ticket.TicketTypeId, "Ticket Type", htmlAttributes: new { @class = "control-label col-md-3" })
+                                <div class="col-md-9">
+                                    @Html.DropDownListFor(model => model.ticket.TicketTypeId, (SelectList)Model.ticketTypes)
+                                    @Html.ValidationMessageFor(model => model.ticket.TicketTypeId, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ticket.PriorityId, "Priority", htmlAttributes: new { @class = "control-label col-md-3" })
+                                <div class="col-md-9">
+                                    @Html.DropDownListFor(model => model.ticket.PriorityId, (SelectList)Model.ticketPriorities)
+                                    @Html.ValidationMessageFor(model => model.ticket.PriorityId, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
+                            {
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ticket.StatusId, "Status", htmlAttributes: new { @class = "control-label col-md-3" })
+                                    <div class="col-md-9">
+                                        @Html.DropDownListFor(model => model.ticket.StatusId, (SelectList)Model.ticketStatuses)
+                                        @Html.ValidationMessageFor(model => model.ticket.StatusId, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ticket.AssignedToId, "Assigned To", htmlAttributes: new { @class = "control-label col-md-3" })
+                                    <div class="col-md-9">
+                                        @Html.DropDownListFor(model => model.ticket.AssignedToId, (SelectList)Model.developerList, "Unassigned")
+                                        @Html.ValidationMessageFor(model => model.ticket.AssignedToId, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                @Html.HiddenFor(model => model.ticket.StatusId)
+                                @Html.HiddenFor(model => model.ticket.AssignedToId)
+
+                            }
+                        <div class="form-group">
+                            <div class="col-md-offset-3 col-md-9">
+                                <input type="submit" value="Save" class="btn btn-default" />
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>  <!-- /.box-body -->
+                <div class="box-footer">                      
+                     @Html.ActionLink("Back to Ticket Details", "Details", new { id = Model.ticket.Id })
+                          
+                </div>   <!-- /.box-footer-->
+            </div>    <!-- /.box -->
+        </div>  <!-- /.col -->
+
+
+        <div class="col-md-6">
+            <div class="box box-warning">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Ticket Attachments</h3>
+                    <div class="pull-right">
+                        <a href="@Url.Action("Create", "TicketAttachments",new { ticketId = Model.ticket.Id })" title="Add Attachment for @Model.ticket.Title" aria-title="Add Attachment @Model.ticket.Title">
+                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="box-body">
+
+                    @if (Model.ticket.TicketAttachments.Count == 0)
+                    {
+                        @: No Attachments for this Ticket
+                    }
+                    @foreach (var file in Model.ticket.TicketAttachments)
+                    {
+                        <div class="row">
+                            <div class="col-md-4">
+                                @*if there is no icon specified, use the file image instead *@
+                                @if (string.IsNullOrEmpty(file.IconName))
+                                {
+                                    <img src="@Url.Content(file.FileUrl)" class="img-thumbnail img-responsive" />
+                                }
+                                else
+                                {
+                                    <i class="@file.IconName" aria-hidden="true"> </i>
+                                }
+                            </div>
+                            <div class="col-md-6">
+                                &nbsp; @file.Title
+                            </div>
+                            <div class="col-md-1">
+                                <a href="@Url.Action("Delete", "TicketAttachments", new { id = file.Id })" arial-label="Remove this file attachment"><i class="fa fa-times-circle" aria-hidden="true"></i></a>
+                                <a href="@Url.Action("Download", "TicketAttachments", new { attachmentId = file.Id })" arial-label="Download this file attachment"><i class="fa fa-download" aria-hidden="true"></i></a>
+
+                           </div>
+                        </div>
+                       
+                    }
+                </div>  <!-- /.box-body -->
+                
+            </div>    <!-- /.box -->
+        </div>  <!-- /.col -->
+
+    </div> <!-- /.row -->
+
+ </div>
+                    
+            <div>
+                @Html.ActionLink("Back to Ticket List", "Index")
+            </div>

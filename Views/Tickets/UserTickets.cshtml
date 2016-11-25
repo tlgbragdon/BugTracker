@@ -1,0 +1,215 @@
+﻿@model BugTracker.Models.AdminUserTicketViewModel
+
+@section contentHeader
+{
+    <!-- Content Header(Page header) -->
+    <section class="content-header">
+        <h1> Tickets </h1>
+
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>Admin Dashboard</a></li>
+            <li class="active">Admin: User Tickets</li>
+        </ol>
+
+    </section>
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h3 class="box-title">Tickets Assigned To: @Model.user.DisplayName</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="All Tickets">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body">
+                @if (Model.assignedTickets.Count() == 0)
+                {
+                    if (Model.developer)
+                    {
+                        @: No Tickets Assigned to this User
+                    }
+                    else
+                    {
+                        @: User is not authorized for ticket assignmment
+                    }
+                }
+                else
+                {
+                <table class="table-bordered table-striped table-responsive paged-table">
+                    <thead>
+                        <tr>
+                            <th class="pad col-sm-2">Ticket</th>
+                            @*<th class="pad col-sm-3"><span class="word-wrap">Description</span></th>*@
+                            <th class="pad">Type</th>
+                            <th class="pad">Priority</th>
+                            <th class="pad">Status</th>
+                            <th class="pad">Last Update</th>
+                            @*<th class="pad">Developer</th>*@
+                            <th class="pad">Submitter</th>
+                            <th class="pad">Project</th>
+                            <th class="pad">Comments</th>
+                            <th class="pad">Attachments</th>
+                            <th class="pad"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        @foreach (var t in Model.assignedTickets)
+                        {
+                            <tr>
+                                <td class="pad col-sm-2"><span class="word-wrap">@t.Title</span></td>
+                                @*<td class="pad col-sm-3"><span class="word-wrap">@t.Description</span></td>*@
+                                <td class="pad">@t.TicketType.Name</td>
+                                <td class="pad">@t.Priority.Name </td>
+                                <td class="pad">@t.Status.Name</td>
+                                @{ DateTime d = new DateTime();
+
+                                    if (t.Updated != null)
+                                    {
+                                        d = (DateTime)t.Updated;
+                                    }
+                                    else
+                                    {
+                                        d = t.Created;
+                                    }
+                                    <td class="pad">@d.Date.ToString("d")</td>
+                                }
+                                @*@if (t.AssignedTo == null)
+                                {
+                                    <td>Unassigned</td> }
+                                else
+                                {
+                                    <td class="pad">@t.AssignedTo.DisplayName</td>
+                                }*@
+                                <td class="pad">@t.Submitter.DisplayName</td>
+                                <td class="pad"><a href="@Url.Action("Details", "Projects", new { id = t.ProjectId })"> @t.Project.Name </a></td>
+                                <td class="pad">@t.TicketComments.Count()</td>
+                                <td class="pad">@t.TicketAttachments.Count()</td>
+
+                                <td class="pad">
+                                    <a href="@Url.Action("Edit", new { id = t.Id })" title="Edit Ticket" aria-label="Edit This Ticket"><i class="fa fa-pencil text-success" aria-hidden="true"></i></a><br />
+                                    <a href="@Url.Action("Details", new { id = t.Id })" title="View Ticket" aria-label="View This Ticket"><i class="fa fa-eye text-success" aria-hidden="true"></i></a>
+
+                                    @if (User.IsInRole("Submitter"))
+                                    {
+                                        <br />
+                                        <a href="@Url.Action("Create", new { projectId = t.Project.Id })" title="Create Ticket" aria-label="Create a new Ticket for this project"> <i class="fa fa-plus-circle text-success" aria-hidden="true"></i></a>
+                                    }
+                                </td>
+                            </tr>
+                          }
+                    </tbody>
+                </table>
+                 }  <!-- end if there are assigned tickets -->
+            </div>   <!-- /.box-body -->
+            <div class="box-footer">
+                @Html.ActionLink("Back to User List", "Index", "Admin")
+            </div>  <!-- /.box-footer -->
+        </div>  <!-- /.box -->
+    </div>   <!-- /.col -->
+</div>  <!-- /.row -->
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h3 class="box-title">Tickets Submitted By: @Model.user.DisplayName</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="All Tickets">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body">
+                @if (Model.submittedTickets.Count() == 0)
+                {
+                    if (Model.submitter)
+                    {
+                        @: No Tickets Submitted by this User
+                    }
+                    else
+                    { 
+                         @: User is not authorized to submit tickets
+                    }
+                }
+                else
+                {
+                    <table class="table-bordered table-striped table-responsive paged-table">
+                        <thead>
+                            <tr>
+                                <th class="pad col-sm-2">Ticket</th>
+                                @*<th class="pad col-sm-3"><span class="word-wrap">Description</span></th>*@
+                                <th class="pad">Type</th>
+                                <th class="pad">Priority</th>
+                                <th class="pad">Status</th>
+                                <th class="pad">Last Update</th>
+                                <th class="pad">Developer</th>
+                                @*<th class="pad">Submitter</th>*@
+                                <th class="pad">Project</th>
+                                <th class="pad">Comments</th>
+                                <th class="pad">Attachments</th>
+                                <th class="pad"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var t in Model.assignedTickets)
+                            {
+                                <tr>
+                                    <td class="pad col-sm-2"><span class="word-wrap">@t.Title</span></td>
+                                    @*<td class="pad col-sm-3"><span class="word-wrap">@t.Description</span></td>*@
+                                    <td class="pad">@t.TicketType.Name</td>
+                                    <td class="pad">@t.Priority.Name </td>
+                                    <td class="pad">@t.Status.Name</td>
+                                    @{ DateTime d = new DateTime();
+
+                                        if (t.Updated != null)
+                                        {
+                                            d = (DateTime)t.Updated;
+                                        }
+                                        else
+                                        {
+                                            d = t.Created;
+                                        }
+                                        <td class="pad">@d.Date.ToString("d")</td>
+                                    }
+                                    @if (t.AssignedTo == null)
+                                        {
+                                            <td>Unassigned</td> }
+                                        else
+                                        {
+                                            <td class="pad">@t.AssignedTo.DisplayName</td>
+                                        }
+                                    @*<td class="pad">@t.Submitter.DisplayName</td>*@
+                                    <td class="pad"><a href="@Url.Action("Details", "Projects", new { id = t.ProjectId })"> @t.Project.Name </a></td>
+                                    <td class="pad">@t.TicketComments.Count()</td>
+                                    <td class="pad">@t.TicketAttachments.Count()</td>
+
+                                    <td class="pad">
+                                        <a href="@Url.Action("Edit", new { id = t.Id })" title="Edit Ticket" aria-label="Edit This Ticket"><i class="fa fa-pencil text-success" aria-hidden="true"></i></a><br />
+                                        <a href="@Url.Action("Details", new { id = t.Id })" title="View Ticket" aria-label="View This Ticket"><i class="fa fa-eye text-success" aria-hidden="true"></i></a>
+
+                                        @if (User.IsInRole("Submitter"))
+                                        {
+                                            <br />
+                                            <a href="@Url.Action("Create", new { projectId = t.Project.Id })" title="Create Ticket" aria-label="Create a new Ticket for this project"> <i class="fa fa-plus-circle text-success" aria-hidden="true"></i></a>
+                                        }
+                                    </td>
+                                </tr>
+                                        }
+                        </tbody>
+                    </table>
+             }  <!-- end if there are submitted tickets -->
+            </div>   <!-- /.box-body -->
+            <div class="box-footer">
+                @Html.ActionLink("Back to User List", "Index", "Admin")
+            </div>  <!-- /.box-footer -->
+        </div>  <!-- /.box -->
+    </div>   <!-- /.col -->
+</div>  <!-- /.row -->
+

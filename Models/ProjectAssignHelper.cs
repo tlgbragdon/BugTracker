@@ -12,7 +12,7 @@ namespace BugTracker.Models
         public bool IsUserOnProject (string userId, int projectId)
         {
             var project = db.Projects.Find(projectId);
-            var user = project.User.Any(u => u.Id == userId);
+            var user = project.AssignedUsers.Any(u => u.Id == userId);
 
             return (user);
         }
@@ -22,7 +22,7 @@ namespace BugTracker.Models
             ApplicationUser user = db.Users.Find(userId);
             Project project = db.Projects.Find(projectId);
 
-            project.User.Add(user);
+            project.AssignedUsers.Add(user);
             db.SaveChanges();
         }
 
@@ -30,7 +30,7 @@ namespace BugTracker.Models
         {
             ApplicationUser user = db.Users.Find(userId);
             Project project = db.Projects.Find(projectId);
-            project.User.Remove(user);
+            project.AssignedUsers.Remove(user);
             db.SaveChanges();
         }
 
@@ -43,7 +43,7 @@ namespace BugTracker.Models
         public List<ApplicationUser> ListUsersOnProject(int projectId)
         {
             Project project = db.Projects.Find(projectId);
-            return project.User.ToList();
+            return project.AssignedUsers.ToList();
         }
 
         //public List<ApplicationUser> ListUsersNotOnProject (int projectId)

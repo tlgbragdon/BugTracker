@@ -1,68 +1,130 @@
 ﻿@model BugTracker.Models.Project
 
-@{
-    ViewBag.Title = "Details";
-}
+@section contentHeader
+{
+    <!-- Content Header(Page header) -->
+    <section class="content-header">
+        <h1>Project Details</h1>
 
-<h2>Details</h2>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+            <li><a href="@Url.Action("Index")">Projects</a></li>
+            <li class="active">@Html.DisplayFor(model => model.Name)</li>
+        </ol>
 
-<div>
-    <h4>Project: @Html.DisplayFor(model => model.Name) </h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.MediaUrl)
-        </dt>
+    </section>
+}    
+    <div class="row">
+    <div class="col-sm-12">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">@Html.DisplayFor(model => model.Name)</h3>
+                @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
+                {
+                <div class="pull-right">
+                    <a href="@Url.Action("Edit", new { projId = Model.Id })" title="Edit @Model.Name" aria-title="Edit @Model.Name">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                    </a>    
+                </div>
+                }
+            </div>
+            <div class="box-body">
+                <div class="col-md-4">
+                    @if (Model.MediaUrl != null)
+                    {
+                        <img src="@Url.Content(Model.MediaUrl)" class="img-thumbnail project-img" />
+                    }
+                </div>
+                <div class="col-md-8">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Description) : <br />
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Description)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Created):
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Created)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Updated) :
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Updated)
+                        </dd>
 
-        <dd>
-            <img src="@Url.Content(Model.MediaUrl)" class="img-responsive" />
-        </dd>
+                        <dt>
+                            Project Manager :
+                        </dt>
+                        <dd>
+                            @ViewBag.ownerName
+                        </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
+                        <dt>
+                            Assigned Users :
+                        </dt>
+                        <dd>
+                            <ul class="list-unstyled list-inline">
+                                @foreach (var u in ViewBag.assignedUsers)
+                                {
+                                    <li>@u.DisplayName</li>
+                                }
+                            </ul>
+                        </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <dt>
+                                Unresolved Tickets:
+                            </dt>
+                            <dd>
+                                @ViewBag.openTickets.Count
+                                </dd>
+                         }
+                        </dl>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Created)
-        </dd>
+                    </div>  <!-- /.col -->
+                </div>  <!-- /.box-body -->
+            <div class="box-footer">
+                <div class="col-sm-6" >
+                    <br /> <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                    @if (User.IsInRole("Administrator"))
+                    {
+                        @Html.ActionLink("Back to All Projects List", "AllIndex")
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Updated)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Updated)
-        </dd>
+                    }
+                    else
+                    {
+                     @Html.ActionLink("Back to Project List", "Index")
+                    }
+                </div>
+                <div class="col-sm-6">
+                    <div class="btn-group">
+                        <a href="@Url.Action("PTIndex", "Tickets", new { projectId = Model.Id })" class="btn btn-success">Tickets</a>
+                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            @if (Model.Tickets.Count > 0)
+                            {
+                                <li class="bg-success"><a href="@Url.Action("PTIndex", "Tickets", new { projectId = Model.Id })">View</a></li>
+                            }
+                            @if (User.IsInRole("Submitter"))
+                            {
+                                <li><a href="@Url.Action("Create", "Tickets", new { projectId = Model.Id })">Create</a></li>
+                            }
 
-        <dt>
-            Project Manager:
-        </dt>
-        <dd>
-            @ViewBag.ownerName
-        </dd>
+                        </ul>
+                    </div>
+                </div><!-- /.box-footer-->
+            </div>   <!-- /.box -->
+        </div>    
+    </div>
+ </div>
+  
 
-        <dt>
-            Assigned Users:
-        </dt>
-        <dd>
-            <ul class="list-unstyled list-inline">
-            @foreach (var u in ViewBag.assignedUsers)
-            {
-                <li>@u.DisplayName</li>
-            }
-            </ul>        
-        </dd>
-        
-
-    </dl>
-</div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { projId = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+   

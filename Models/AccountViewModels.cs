@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
+
 
 namespace BugTracker.Models
 {
@@ -89,7 +91,7 @@ namespace BugTracker.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
 
@@ -108,7 +110,7 @@ namespace BugTracker.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
         public string Code { get; set; }
@@ -141,6 +143,19 @@ namespace BugTracker.Models
         [Display(Name = "Email")]
         public string Email { get; set; }
 
+        [Display(Name = "Profile Image")]
+        public string ProfileImage { get; set; }
+
+        [Display(Name = "Profile Image")]
+        public string ProfileIcon { get; set; }
+
+    }
+
+    public class DemoLoginViewModel
+    {
+        [Display(Name = "Select Role for Demo")]
+        public SelectList UserRoles { get; set; }
+        public string SelectedRole { get; set; }
     }
 
 }

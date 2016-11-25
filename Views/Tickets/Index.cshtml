@@ -1,103 +1,105 @@
 ﻿@model IEnumerable<BugTracker.Models.Ticket>
 
-@{
-    ViewBag.Title = "Index";
+@section contentHeader
+{
+    <!-- Content Header(Page header) -->
+    <section class="content-header">
+        <h1> Tickets </h1>
+
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+            <li class="active">All Tickets</li>
+        </ol>
+
+    </section>
 }
 
-<h2>Index</h2>
 
-<p>
-    @if (User.IsInRole("Submitter"))
-    {
-
-        @Html.ActionLink("Create New", "Create")
-    }
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Title)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Priority.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.TicketType.Name)
-        </th>
-        @*<th>
-            @Html.DisplayNameFor(model => model.Created)
-        </th>*@
-        <th>
-            Last Updated
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Project.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AssignedTo)
-        </th>
-        @*<th>
-            @Html.DisplayNameFor(model => model.Submitter)
-        </th>*@
-        <th></th>
-    </tr>
-
-@foreach (var item in Model)
-{
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Priority.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TicketType.Name)
-        </td>
-        @*<td>
-            @Html.DisplayFor(modelItem => item.Created)
-        </td>*@
-        <td>
-            @{ DateTime d = new DateTime();
-
-                if (item.Updated != null)
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h3 class="box-title">My Tickets</h3>
+            </div>
+            <div class="box-body">
+                @if (Model.Count() == 0)
                 {
-                    d = (DateTime)item.Updated;
+                    @: No tickets to view
                 }
                 else
                 {
-                    d = item.Created;
-                }
-                <p>@d.Date.ToString("d")</p>
-            }
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Project.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AssignedTo.DisplayName)
-        </td>
-        @*<td>
-            @Html.DisplayFor(modelItem => item.Submitter.DisplayName)
-        </td>*@
-        <td>
-            @Html.ActionLink("Edit Ticket", "Edit", new { id=item.Id }) <br />
-            @Html.ActionLink("View Details", "Details", new { id=item.Id })
-            @* | @Html.ActionLink("Delete", "Delete", new { id=item.Id })*@
-        </td>
-    </tr>
-}
+                    <table id="ticket-table" class="table-bordered table-striped table-responsive ">
+                        <thead>
+                            <tr>
+                                <th> </th>
+                                <th>Ticket</th>
+                                <th>Description</th>
+                                <th>Type</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Last Update</th>
+                                <th>Developer</th>
+                                <th>Submitter</th>
+                                <th>Project</th>
+                                <th aria-label="Comments"><i class="fa fa-comments-o" title="Comments" aria-hidden="true"></i></th>
+                                <th aria-label="Attachments"><i class="fa fa-files-o" title="Attachments" aria-hidden="true"></i></th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                       
+                            @foreach (var t in Model)
+                            {
+                              <tr>
 
-</table>
+                                  <td>
+                                      <a href="@Url.Action("Details", new { id = t.Id })" title="View Ticket" aria-label="View This Ticket"><i class="fa fa-eye text-success" aria-hidden="true"></i></a><br />
+                                      <a href="@Url.Action("Edit", new { id = t.Id })" aria-label="Edit This Ticket"><i class="fa fa-pencil text-success" aria-hidden="true"></i></a><br />
+                                      <a href="@Url.Action("Index", "TicketHistories", new { ticketId = t.Id })" aria-label="View History of Ticket"><i class="fa fa-history text-success" aria-hidden="true"></i></a>
+
+                                      @if (User.IsInRole("Submitter"))
+                                      {
+                                          <br />
+                                          <a href="@Url.Action("Create", new { projectId = t.Project.Id })" title="Create Ticket" aria-label="Create a new Ticket for this project"> <i class="fa fa-plus-circle text-success" aria-hidden="true"></i></a>
+                                      }
+                                  </td>
+                                  <td><a href="@Url.Action("Details", new { id = t.Id })" class="text-success">@t.Title</a></td>
+
+                                <td>@t.Description</td>
+                                <td>@t.TicketType.Name</td>
+                                <td>@t.Priority.Name</td>
+                                <td>@t.Status.Name</td>
+                                @{ DateTime d = new DateTime();
+
+                                    if (t.Updated != null)
+                                    {
+                                        d = (DateTime)t.Updated;
+                                    }
+                                    else
+                                    {
+                                        d = t.Created;
+                                    }
+                                    <td>@d.Date.ToString("d")</td>
+                                }
+                                @if (t.AssignedTo == null)
+                                {
+                                    <td>Unassigned</td> }
+                                else
+                                {
+                                    <td>@t.AssignedTo.DisplayName</td>
+                                }
+                                <td>@t.Submitter.DisplayName</td>
+                                <td><a href="@Url.Action("Details", "Projects", new { id = t.ProjectId })"> @t.Project.Name </a></td>
+                                <td>@t.TicketComments.Count()</td>
+                                <td>@t.TicketAttachments.Count()</td>
+                               
+                              </tr>
+                         }
+                        </tbody>
+                    </table>
+             }
+            </div>   <!-- /.box-body -->
+     </div>  <!-- /.box -->
+   </div>   <!-- /.col -->
+</div>  <!-- /.row -->
+

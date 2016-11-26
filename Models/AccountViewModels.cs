@@ -149,6 +149,8 @@ namespace BugTracker.Models
         [Display(Name = "Profile Image")]
         public string ProfileIcon { get; set; }
 
+        public string ProfileColor { get; set; }
+
     }
 
     public class DemoLoginViewModel

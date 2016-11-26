@@ -11,12 +11,11 @@
             <!-- Sidebar user panel -->
             <div class="user-panel">
                 <div class="pull-left image">  
-                    <!--TODO: uncomment after adding ProfileUrl for profile image to user -->
-                    @*@if (ViewBag.user.ProfileUrl != null)
-                    {*@
-                        <img src="~/images/no-bugs.png" class="img-circle" alt="User Image" />
-                        @*<img src = "user-r-profile-image.jpg" class="img-circle" alt="User Image">*@@*
-                    }*@
+                    @if (ViewBag.user.ProfileIcon != null)
+                    {
+                        @*<img src="~/images/no-bugs.png" class="img-circle" alt="User Image" />*@
+                        <span class="profile-icon" style="background-color:@ViewBag.user.ProfileColor" alt="User Initials">@ViewBag.user.ProfileIcon</span>
+                    }
                 </div>
                 <div class="pull-left info">
                     <p>@ViewBag.user.DisplayName</p>

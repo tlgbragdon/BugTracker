@@ -349,6 +349,7 @@ namespace BugTracker.Controllers
             model.Email = user.Email;
             model.ProfileImage = user.ProfileImage;
             model.ProfileIcon = user.ProfileIcon;
+            model.ProfileColor = user.ProfileColor;
 
             return View(model);
         }
@@ -366,6 +367,7 @@ namespace BugTracker.Controllers
             model.Email = user.Email;
             model.ProfileImage = user.ProfileImage;
             model.ProfileIcon = user.ProfileIcon;
+            model.ProfileColor = user.ProfileColor;
 
             return View(model);
         }
@@ -381,30 +383,36 @@ namespace BugTracker.Controllers
             {
                 ApplicationUser user = UserManager.FindById(User.Identity.GetUserId());
                 user.Updated = DateTime.Now;
+                string initials = "";
                 if (!string.IsNullOrEmpty(model.FirstName))
                 {
                     user.FirstName = model.FirstName;
+                    initials = user.FirstName[0].ToString();
                 }
                 if (!string.IsNullOrEmpty(model.LastName))
                 {
                     user.LastName = model.LastName;
+                    initials += user.LastName[0].ToString();
                 }
                 if (!string.IsNullOrEmpty(model.DisplayName))
                 {
                     user.DisplayName = model.DisplayName;
+                    if (string.IsNullOrEmpty(initials))
+                    {
+                        char[] delimiterChars = { ' ', ',', '.', ':', '\t' };
+                        string[] names = user.DisplayName.Split(delimiterChars);
+                        foreach (var word in names)
+                        {
+                            initials += word[0].ToString();
+                        }
+                    }
+                   
                 }
                 // email address is also username
                 if (!string.IsNullOrEmpty(model.Email))
                 {
                     user.Email = model.Email;
                     user.UserName = model.Email;
-                }
-
-                if (ImageUploadValidator.IsWebFriendlyImage(profileImage))
-                {
-                    var fileName = Path.GetFileName(profileImage.FileName);
-                    profileImage.SaveAs(Path.Combine(Server.MapPath("~/images/"), fileName));
-                    user.ProfileImage = "~/images/" + fileName;
                 }
 
                 IdentityResult result = await UserManager.UpdateAsync(user);

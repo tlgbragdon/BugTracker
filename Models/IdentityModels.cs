@@ -21,6 +21,7 @@ namespace BugTracker.Models
         public DateTime? Updated { get; set; }
         public string ProfileImage { get; set; }
         public string ProfileIcon { get; set; }
+        public string ProfileColor { get; set; }
 
 
         public ApplicationUser()

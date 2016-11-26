@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using BugTracker.Models;
 using System.Configuration;
+using System.Drawing;
 
 namespace BugTracker.Controllers
 {
@@ -211,28 +212,37 @@ namespace BugTracker.Controllers
             {
 
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                string initials = "";
                 user.Created = DateTime.Now;
+                user.ProfileColor = ColorGenerator.GenerateHexColor();
+                
                 if (!string.IsNullOrEmpty(model.FirstName))
                 {
                     user.FirstName = model.FirstName;
-                    user.ProfileIcon = model.FirstName[0].ToString();
+                    initials = model.FirstName[0].ToString();
                 }
                 if (!string.IsNullOrEmpty(model.LastName))
                 {
                     user.LastName = model.LastName;
-                    user.ProfileIcon += model.LastName[0].ToString();
+                    initials += model.LastName[0].ToString();
 
                 }
                 if (!string.IsNullOrEmpty(model.DisplayName))
                 {
                     user.DisplayName = model.DisplayName;
-                    if (string.IsNullOrEmpty(user.ProfileIcon))
+                    // use initials from display name only if first/last name was not already provided
+                    if (string.IsNullOrEmpty(initials))
                     {
-                        user.ProfileIcon = model.DisplayName[0].ToString();
+                        char[] delimiterChars = { ' ', ',', '.', ':', '\t' };
+                        string[] names = model.DisplayName.Split(delimiterChars);
+                        foreach (var word in names)
+                        {
+                            initials += word[0].ToString();
+                        }
                     }
                 }
 
-
+                user.ProfileIcon = initials;
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -455,10 +465,18 @@ namespace BugTracker.Controllers
                 }
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
 
-                // save profile info from external login
+                // save profile name from external login
                 user.DisplayName = info.ExternalIdentity.Name;
-                user.ProfileIcon = user.DisplayName[0].ToString();
+                char[] delimiterChars = { ' ', ',', '.', ':', '\t' };
+                string[] names = user.DisplayName.Split(delimiterChars);
+                foreach (var word in names)
+                {
+                    user.ProfileIcon += word[0].ToString();
+                }
+
                 user.Created = DateTime.Now;
+                user.ProfileColor = ColorGenerator.GenerateHexColor();
+
 
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)

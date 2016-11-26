@@ -55,11 +55,12 @@
                                   <td>
                                       <a href="@Url.Action("Details", new { id = t.Id })" title="View Ticket" aria-label="View This Ticket"><i class="fa fa-eye text-success" aria-hidden="true"></i></a><br />
                                       <a href="@Url.Action("Edit", new { id = t.Id })" aria-label="Edit This Ticket"><i class="fa fa-pencil text-success" aria-hidden="true"></i></a><br />
-                                      <a href="@Url.Action("Index", "TicketHistories", new { ticketId = t.Id })" aria-label="View History of Ticket"><i class="fa fa-history text-success" aria-hidden="true"></i></a>
-
+                                      @if (t.TicketHistories.Count() > 0)
+                                      {
+                                      <a href="@Url.Action("Index", "TicketHistories", new { ticketId = t.Id })" aria-label="View History of Ticket"><i class="fa fa-history text-success" aria-hidden="true"></i></a> <br />
+                                      }
                                       @if (User.IsInRole("Submitter"))
                                       {
-                                          <br />
                                           <a href="@Url.Action("Create", new { projectId = t.Project.Id })" title="Create Ticket" aria-label="Create a new Ticket for this project"> <i class="fa fa-plus-circle text-success" aria-hidden="true"></i></a>
                                       }
                                   </td>

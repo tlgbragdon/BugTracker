@@ -125,8 +125,9 @@ namespace BugTracker.Models
             }
             else
             {
-                ModelState.AddModelError("Body", " You are not authorized to add comments to this ticket.");
-                return View();            }
+                ModelState.AddModelError("", " You are not authorized to edit comments to this ticket.");
+                return RedirectToAction("Details", "Tickets", new { id = ticketComment.TicketId });
+            }
         }
 
         // POST: TicketComments/Edit

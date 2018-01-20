@@ -118,21 +118,21 @@ namespace BugTracker.Controllers
         public async Task<ActionResult> DemoLogin(DemoLoginViewModel viewModel)
         {           
             string demoPWD = ConfigurationManager.AppSettings["DemoCredentials"];
-            string demoUser = "demo.sub@bugtracker.com";
+            string demoUser = "demo.sub@mailinator.com";
 
             switch (viewModel.SelectedRole) 
             {
                 case "Administrator":
-                    demoUser = "demo.admin@bugtracker.com";
+                    demoUser = "demo.admin@mailinator.com";
                     break;
                 case "ProjectManager":
-                    demoUser = "demo.pm@bugtracker.com";
+                    demoUser = "demo.pm@mailinator.com";
                     break;
                 case "Developer":
-                    demoUser = "demo.dev@bugtracker.com";
+                    demoUser = "demo.dev@mailinator.com";
                     break;
                 case "Submitter":
-                    demoUser = "demo.sub@bugtracker.com";
+                    demoUser = "demo.sub@mailinator.com";
                     break;
              }
             var result = await SignInManager.PasswordSignInAsync(demoUser, demoPWD, false, shouldLockout: false);

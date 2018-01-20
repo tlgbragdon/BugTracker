@@ -5,7 +5,7 @@
 
 <h2>@ViewBag.Title</h2>
 
-@using (Html.BeginForm("ProfileEdit", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form", encType = "Multipart/form-data" } ))
+@using (Html.BeginForm("ProfileEdit", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form", encType = "Multipart/form-data" } ))
 {
     @Html.AntiForgeryToken()
     <h4>Update your account.</h4>

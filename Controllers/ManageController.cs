@@ -336,7 +336,7 @@ namespace BugTracker.Controllers
             base.Dispose(disposing);
         }
 
-        // GET: /Account/ProfileDetails
+        // GET: /Manage/ProfileDetails
         [Authorize]
         public ActionResult ProfileDetails()
         {
@@ -354,7 +354,7 @@ namespace BugTracker.Controllers
             return View(model);
         }
 
-        // GET: /Account/ProfileEdit
+        // GET: /Manage/ProfileEdit
         [Authorize]
         public ActionResult ProfileEdit()
         {
@@ -373,7 +373,7 @@ namespace BugTracker.Controllers
         }
 
         //
-        // POST: /Account/ProfileEdit
+        // POST: /Manage/ProfileEdit
         [HttpPost]
         [ValidateAntiForgeryToken]
         //[OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
@@ -427,7 +427,7 @@ namespace BugTracker.Controllers
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                 }
 
-                return RedirectToAction("ProfileDetails", "Account");
+                return RedirectToAction("ProfileDetails", "Manage");
             }
 
             // If we got this far, something failed, redisplay form
